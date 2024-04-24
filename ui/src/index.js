@@ -4,6 +4,8 @@ import App from './App';
 import './index.css';
 import {createBrowserRouter, RouterProvider, Route } from 'react-router-dom';
 import JonnyPage from "./pages/jonnyPage";
+import TasmansPage from "./pages/tas";
+import TunsPage from './pages/tun';
 
 const router =  createBrowserRouter([
     {
@@ -13,6 +15,14 @@ const router =  createBrowserRouter([
     {
         path: "jonnyPage",
         element: <JonnyPage />
+    },
+    {
+        path: "tasPage",
+        element: <TasmansPage />
+    },
+    {
+        path: "tunPage",
+        element: <TunsPage />
     },
   
 ]);

@@ -7,6 +7,8 @@ const Menu = () => (
   <>
   <p><a href="#home">Home</a></p>
   <p><a href="jonnyPage">jonnyPage</a></p>
+  <p><a href="tasPage">tasman</a></p>
+  <p><a href="tunPage">tun</a></p>
   <p><a href="#possibility">My Learning</a></p>
   <p><a href="#learning">Team</a></p>
   <p><a href="#lib">Library</a></p>
@@ -33,7 +35,7 @@ const Navbar = () =>
       </div>
 
       
-      <div className='gpt3__navbar-manu' >
+      <div className='gpt3__navbar-menu' >
         {toggleMenu
         ? <RiCloseLine color="#fff" size={27} onClick={() => setToggleMenu(false)}/>
         : <RiMenu3Line color="#fff" size={27} onClick={() => setToggleMenu(true)}/>

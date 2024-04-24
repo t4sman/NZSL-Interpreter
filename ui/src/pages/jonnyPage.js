@@ -8,9 +8,11 @@ const jonnyPage = () => {
     <div className=''>
       <div className='gradient__bg'>
         <Navbar />
+        
       </div>
-      <div>
+      <div className='gradient__bg'>
         {/* put your code here */}
+        
 
 
 
