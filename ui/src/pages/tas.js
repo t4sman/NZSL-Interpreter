@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navbar } from '../components';
+import { Navbar, MediaPipe } from '../components';
 import { Header } from '../containers';
 
 
@@ -8,19 +8,9 @@ const tas = () => {
     <div className=''>
       <div className='gradient__bg'>
         <Navbar />
-        
+        <MediaPipe />
       </div>
       <div className='gradient__bg'>
-        {/* put your code here */}
-        
-
-
-
-
-
-
-
-        {/* put your code here */}
       </div>
       
     </div>
