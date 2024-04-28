@@ -7,6 +7,10 @@ const MediaPipe = () => {
     const canvasElementRef = useRef(null);
     const webcambutton = useRef(null);
     const demosSectionRef = useRef(null);
+    const poseEsti = useRef(null);
+    const handEsti = useRef(null);
+    const videobutton = useRef(null);
+
 
     useEffect(() => {
         const demosSection = demosSectionRef.current;
@@ -16,6 +20,12 @@ const MediaPipe = () => {
         let runningMode = "VIDEO";
         let enableWebcamButton = webcambutton.current;
         let webcamRunning = false;
+        let enablePose = poseEsti.current;
+        let poseRunning = false;
+        let enableHand = handEsti.current;
+        let handRunning = false;
+        let videoButton = videobutton.current;
+        let videoOn = true;
 
         // Before we can use HandLandmarker class we must wait for it to finish
         // loading. Machine Learning models can be large and take a moment to
@@ -51,24 +61,23 @@ const MediaPipe = () => {
         const hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia;
 
         if (hasGetUserMedia()) {
-            enableWebcamButton.addEventListener("click", enableCam);
+            enableWebcamButton.addEventListener("click", toggleCam);
+            enablePose.addEventListener("click", togglePoseEstimation);
+            enableHand.addEventListener("click", toggleHandEstimation);
+            videoButton.addEventListener("click", togglebgVideo);
         } else {
             console.warn("getUserMedia() is not supported by your browser");
         }
 
-        function enableCam(event) {
-            if (!handLandmarker) {
-                console.log("Wait! objectDetector not loaded yet.");
+        function toggleCam(event) {
+
+            if (webcamRunning) {
                 return;
             }
 
-            if (webcamRunning === true) {
-                webcamRunning = false;
-                enableWebcamButton.innerText = "ENABLE PREDICTIONS";
-            } else {
-                webcamRunning = true;
-                enableWebcamButton.innerText = "DISABLE PREDICTIONS";
-            }
+            webcamRunning = true;
+            
+            enableWebcamButton.classList.add("invisible");
 
             // getUsermedia parameters.
             const constraints = {
@@ -80,6 +89,48 @@ const MediaPipe = () => {
                 video.srcObject = stream;
                 video.addEventListener("loadeddata", predictWebcam);
             });
+        }
+
+        function togglePoseEstimation() {
+            if (!poseLandmarker) {
+                console.log("Wait! objectDetector not loaded yet.");
+                return;
+            }
+
+            if (poseRunning) {
+                poseRunning = false;
+                enablePose.textContent = "Turn on Pose Estimations";
+            } else {
+                poseRunning = true;
+                enablePose.textContent = "Turn off Pose Estimations";
+            }
+        }
+
+        function toggleHandEstimation() {
+            if (!handLandmarker) {
+                console.log("Wait! objectDetector not loaded yet.");
+                return;
+            }
+
+            if (handRunning) {
+                handRunning = false;
+                enableHand.textContent = "Turn on Hand Estimation";
+            } else {
+                handRunning = true;
+                enableHand.textContent = "Turn off Hand Estimation";
+            }
+        }
+
+        function togglebgVideo() {
+            if (videoOn) {
+                videoOn = false;
+                video.classList.add("invisible");
+                videoButton.textContent = "Turn on Background Video";
+            } else {
+                videoOn = true;
+                video.classList.remove("invisible");
+                videoButton.textContent = "Turn off Background Video";
+            }
         }
 
         let lastVideoTime = -1;
@@ -101,8 +152,41 @@ const MediaPipe = () => {
                 poseresults = await poseLandmarker.detectForVideo(video, startTimeMs);
             }
             canvasCtx.save();
-            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-            if (handresults.landmarks) {
+            
+            if (!videoOn) {
+                canvasCtx.fillStyle = "blue";
+                canvasCtx.fillRect(0, 0, canvasElement.width, canvasElement.height, );
+            } else {
+                canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+            }
+            if (poseRunning&&poseresults.landmarks) {
+                for (const landmarks of poseresults.landmarks) {
+                    poseconnections.forEach(connection => {
+                        const { start, end } = connection;
+                        if (landmarks[start] && landmarks[end]) {
+                            canvasCtx.beginPath();
+                            canvasCtx.lineWidth = 8;
+                            canvasCtx.strokeStyle = "green";
+                            canvasCtx.moveTo(landmarks[start].x * canvasElement.width, landmarks[start].y * canvasElement.height);
+                            canvasCtx.lineTo(landmarks[end].x * canvasElement.width, landmarks[end].y * canvasElement.height);
+                            canvasCtx.stroke();
+                        }
+                    });
+
+                    // Draw landmarks
+                    landmarks.forEach((landmark) => {
+                        if (landmark.x === undefined || landmark.y === undefined) {
+                            return;
+                        }
+                        canvasCtx.beginPath();
+                        canvasCtx.fillStyle = "white";
+                        canvasCtx.lineWidth = 0.3;
+                        canvasCtx.arc(landmark.x * canvasElement.width, landmark.y * canvasElement.height, 5, 0, Math.PI * 2);
+                        canvasCtx.fill();
+                    });
+                }
+            }
+            if (handRunning&&handresults.landmarks) {
                 for (const landmarks of handresults.landmarks) {
                     handconnections.forEach(connection => {
                         const { start, end } = connection;
@@ -122,39 +206,13 @@ const MediaPipe = () => {
                         }
                         canvasCtx.beginPath();
                         canvasCtx.fillStyle = "black";
-                        canvasCtx.lineWidth = 1;
+                        canvasCtx.lineWidth = 0.3;
                         canvasCtx.arc(landmark.x * canvasElement.width, landmark.y * canvasElement.height, 5, 0, Math.PI * 2);
                         canvasCtx.fill();
                     });
                 }
             }
-            if (poseresults.landmarks) {
-                for (const landmarks of poseresults.landmarks) {
-                    poseconnections.forEach(connection => {
-                        const { start, end } = connection;
-                        if (landmarks[start] && landmarks[end]) {
-                            canvasCtx.beginPath();
-                            canvasCtx.lineWidth = 3;
-                            canvasCtx.strokeStyle = "green";
-                            canvasCtx.moveTo(landmarks[start].x * canvasElement.width, landmarks[start].y * canvasElement.height);
-                            canvasCtx.lineTo(landmarks[end].x * canvasElement.width, landmarks[end].y * canvasElement.height);
-                            canvasCtx.stroke();
-                        }
-                    });
-
-                    // Draw landmarks
-                    landmarks.forEach((landmark) => {
-                        if (landmark.x === undefined || landmark.y === undefined) {
-                            return;
-                        }
-                        canvasCtx.beginPath();
-                        canvasCtx.fillStyle = "white";
-                        canvasCtx.lineWidth = 2;
-                        canvasCtx.arc(landmark.x * canvasElement.width, landmark.y * canvasElement.height, 5, 0, Math.PI * 2);
-                        canvasCtx.fill();
-                    });
-                }
-            }
+            
             canvasCtx.restore();
 
             // Call this function again to keep predicting when the browser is ready.
@@ -165,24 +223,28 @@ const MediaPipe = () => {
             }
         }
 
-    }, [videoRef, canvasElementRef, webcambutton, demosSectionRef]);
+    }, [videoRef, canvasElementRef, webcambutton, demosSectionRef, poseEsti, handEsti, videobutton]);
 
 
     return (
-        <section id="demos" className="invisible" ref={demosSectionRef}>
-            <h1>MediaPipe Hand and Pose Landmark Detection</h1>
-            <br></br>
-            <p>Click the button below to enable webcam and start detecting hand and pose landmarks.</p>
-            <button id="webcamButton" ref={webcambutton} className="btn">
-                <span className="mdc-button__ripple"></span>
-                <span className="mdc-button__label">ENABLE WEBCAM</span>
-            </button>
-
+        <div id="demos" className="invisible container" ref={demosSectionRef}>
             <div style={{ position: "relative" }}>
                 <video id="webcam" style={{ position: "absolute" }} ref={videoRef} autoPlay playsInline></video>
                 <canvas className="output_canvas" id="output_canvas" ref={canvasElementRef} style={{ position: "absolute", left: "0px", top: "0px" }}></canvas>
+                <button id="webcamButton" ref={webcambutton} className="btn" style={{ position: "absolute", left: "20px", top: "20px" }}>
+                    Turn on Webcam
+                </button>
+                <button id="poseEstimationButton"  ref={poseEsti} className="btn" style={{ position: "absolute", left: "20px", top: "70px" }}>
+                    Turn on Pose Estimation
+                </button>
+                <button id="handEstimationButton"  ref={handEsti} className="btn" style={{ position: "absolute", left: "20px", top: "120px" }}>
+                    Turn on Hand Estimation
+                </button>
+                <button id="backgroundVideoButton" ref={videobutton} className="btn" style={{ position: "absolute", left: "20px", top: "170px" }}>
+                    Turn off Background Video
+                </button>
             </div>
-        </section>
+        </div>
     )
 }
 
