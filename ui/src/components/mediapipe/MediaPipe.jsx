@@ -86,12 +86,6 @@ const MediaPipe = () => {
           let lastVideoTime = -1;
           let handresults = undefined;
           let poseresults = undefined;
-          console.log(video);
-
-          function drawLandmarks(ctx, landmarks) {
-            // Draw connections
-            
-          }
 
           let handconnections = HandLandmarker.HAND_CONNECTIONS;
           let poseconnections = PoseLandmarker.POSE_CONNECTIONS;
@@ -127,12 +121,13 @@ const MediaPipe = () => {
                 
                     // Draw landmarks
                     landmarks.forEach((landmark) => {
-                        if (landmark[0] === undefined || landmark[1] === undefined) {
+                        if (landmark.x === undefined || landmark.y === undefined) {
                             return;
                         }
                         canvasCtx.beginPath();
-                        canvasCtx.fillStyle = "white";
-                        canvasCtx.arc(landmark.x * canvasElement.width, landmark.y * canvasElement.height, 10, 0, Math.PI * 2);
+                        canvasCtx.fillStyle = "black";
+                        canvasCtx.lineWidth = 1;
+                        canvasCtx.arc(landmark.x * canvasElement.width, landmark.y * canvasElement.height, 5, 0, Math.PI * 2);
                         canvasCtx.fill();
                     });
                 }
@@ -155,11 +150,13 @@ const MediaPipe = () => {
                 
                     // Draw landmarks
                     landmarks.forEach((landmark) => {
-                        if (landmark[0] === undefined || landmark[1] === undefined) {
+                        if (landmark.x === undefined || landmark.y === undefined) {
                             return;
                         }
                         canvasCtx.beginPath();
-                        canvasCtx.arc(landmark[0], landmark[1], 5, 0, Math.PI * 2);
+                        canvasCtx.fillStyle = "white";
+                        canvasCtx.lineWidth = 2;
+                        canvasCtx.arc(landmark.x * canvasElement.width, landmark.y * canvasElement.height, 5, 0, Math.PI * 2);
                         canvasCtx.fill();
                     });
                 }
