@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import './mediapipe.css';
-import { FilesetResolver, HandLandmarker, PoseLandmarker} from '@mediapipe/tasks-vision'; 
+import { FilesetResolver, HandLandmarker, PoseLandmarker } from '@mediapipe/tasks-vision';
 
 const MediaPipe = () => {
     const videoRef = useRef(null);
@@ -10,7 +10,7 @@ const MediaPipe = () => {
 
     useEffect(() => {
         const demosSection = demosSectionRef.current;
-        
+
         let handLandmarker = undefined;
         let poseLandmarker = undefined;
         let runningMode = "VIDEO";
@@ -21,26 +21,26 @@ const MediaPipe = () => {
         // loading. Machine Learning models can be large and take a moment to
         // get everything needed to run.
         const createHandLandmarker = async () => {
-        const vision = await FilesetResolver.forVisionTasks(
-            "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
-        );
-        handLandmarker = await HandLandmarker.createFromOptions(vision, {
-            baseOptions: {
-            modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
-            delegate: "GPU"
-            },
-            runningMode: runningMode,
-            numHands: 2
-        });
-        poseLandmarker = await PoseLandmarker.createFromOptions(vision, {
-            baseOptions: {
-            modelAssetPath: `https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task`,
-            delegate: "GPU"
-            },
-            runningMode: runningMode
-        });
-
+            const vision = await FilesetResolver.forVisionTasks(
+                "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
+            );
+            handLandmarker = await HandLandmarker.createFromOptions(vision, {
+                baseOptions: {
+                    modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
+                    delegate: "GPU"
+                },
+                runningMode: runningMode,
+                numHands: 2
+            });
+            poseLandmarker = await PoseLandmarker.createFromOptions(vision, {
+                baseOptions: {
+                    modelAssetPath: `https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task`,
+                    delegate: "GPU"
+                },
+                runningMode: runningMode
+            });
         }
+
         demosSection.classList.remove("invisible");
         createHandLandmarker();
 
@@ -51,46 +51,45 @@ const MediaPipe = () => {
         const hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia;
 
         if (hasGetUserMedia()) {
-            
             enableWebcamButton.addEventListener("click", enableCam);
-          } else {
+        } else {
             console.warn("getUserMedia() is not supported by your browser");
         }
 
         function enableCam(event) {
             if (!handLandmarker) {
-              console.log("Wait! objectDetector not loaded yet.");
-              return;
+                console.log("Wait! objectDetector not loaded yet.");
+                return;
             }
-          
+
             if (webcamRunning === true) {
-              webcamRunning = false;
-              enableWebcamButton.innerText = "ENABLE PREDICTIONS";
+                webcamRunning = false;
+                enableWebcamButton.innerText = "ENABLE PREDICTIONS";
             } else {
-              webcamRunning = true;
-              enableWebcamButton.innerText = "DISABLE PREDICTIONS";
+                webcamRunning = true;
+                enableWebcamButton.innerText = "DISABLE PREDICTIONS";
             }
-          
+
             // getUsermedia parameters.
             const constraints = {
-              video: true
+                video: true
             };
-          
+
             // Activate the webcam stream.
             navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
-              video.srcObject = stream;
-              video.addEventListener("loadeddata", predictWebcam);
+                video.srcObject = stream;
+                video.addEventListener("loadeddata", predictWebcam);
             });
-          }
-        
-          let lastVideoTime = -1;
-          let handresults = undefined;
-          let poseresults = undefined;
+        }
 
-          let handconnections = HandLandmarker.HAND_CONNECTIONS;
-          let poseconnections = PoseLandmarker.POSE_CONNECTIONS;
+        let lastVideoTime = -1;
+        let handresults = undefined;
+        let poseresults = undefined;
 
-          async function predictWebcam() {
+        let handconnections = HandLandmarker.HAND_CONNECTIONS;
+        let poseconnections = PoseLandmarker.POSE_CONNECTIONS;
+
+        async function predictWebcam() {
             // Set the size of the drawing surface, not the size of the canvas element.
             canvasElement.width = video.videoWidth;
             canvasElement.height = video.videoHeight;
@@ -107,8 +106,7 @@ const MediaPipe = () => {
                 for (const landmarks of handresults.landmarks) {
                     handconnections.forEach(connection => {
                         const { start, end } = connection;
-                        if (landmarks[start] && landmarks[end])
-                        {
+                        if (landmarks[start] && landmarks[end]) {
                             canvasCtx.beginPath();
                             canvasCtx.lineWidth = 5;
                             canvasCtx.strokeStyle = "red";
@@ -116,9 +114,7 @@ const MediaPipe = () => {
                             canvasCtx.lineTo(landmarks[end].x * canvasElement.width, landmarks[end].y * canvasElement.height);
                             canvasCtx.stroke();
                         }
-                    }
-                    );
-                
+                    });
                     // Draw landmarks
                     landmarks.forEach((landmark) => {
                         if (landmark.x === undefined || landmark.y === undefined) {
@@ -136,8 +132,7 @@ const MediaPipe = () => {
                 for (const landmarks of poseresults.landmarks) {
                     poseconnections.forEach(connection => {
                         const { start, end } = connection;
-                        if (landmarks[start] && landmarks[end])
-                        {
+                        if (landmarks[start] && landmarks[end]) {
                             canvasCtx.beginPath();
                             canvasCtx.lineWidth = 3;
                             canvasCtx.strokeStyle = "green";
@@ -145,9 +140,8 @@ const MediaPipe = () => {
                             canvasCtx.lineTo(landmarks[end].x * canvasElement.width, landmarks[end].y * canvasElement.height);
                             canvasCtx.stroke();
                         }
-                    }
-                    );
-                
+                    });
+
                     // Draw landmarks
                     landmarks.forEach((landmark) => {
                         if (landmark.x === undefined || landmark.y === undefined) {
@@ -169,23 +163,23 @@ const MediaPipe = () => {
             } else {
                 canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
             }
-            }
-        
+        }
+
     }, [videoRef, canvasElementRef, webcambutton, demosSectionRef]);
-    
+
 
     return (
         <section id="demos" className="invisible" ref={demosSectionRef}>
             <h1>MediaPipe Hand and Pose Landmark Detection</h1>
             <br></br>
             <p>Click the button below to enable webcam and start detecting hand and pose landmarks.</p>
-            <button id="webcamButton"  ref={webcambutton} className="btn">
+            <button id="webcamButton" ref={webcambutton} className="btn">
                 <span className="mdc-button__ripple"></span>
                 <span className="mdc-button__label">ENABLE WEBCAM</span>
             </button>
 
             <div style={{ position: "relative" }}>
-                <video id="webcam" style={{ position: "absolute" }} ref={videoRef}autoPlay playsInline></video>
+                <video id="webcam" style={{ position: "absolute" }} ref={videoRef} autoPlay playsInline></video>
                 <canvas className="output_canvas" id="output_canvas" ref={canvasElementRef} style={{ position: "absolute", left: "0px", top: "0px" }}></canvas>
             </div>
         </section>
