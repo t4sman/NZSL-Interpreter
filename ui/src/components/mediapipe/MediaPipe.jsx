@@ -30,7 +30,7 @@ const MediaPipe = () => {
         // Before we can use HandLandmarker class we must wait for it to finish
         // loading. Machine Learning models can be large and take a moment to
         // get everything needed to run.
-        const createHandLandmarker = async () => {
+        const createLandmarkers = async () => {
             const vision = await FilesetResolver.forVisionTasks(
                 "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
             );
@@ -52,7 +52,7 @@ const MediaPipe = () => {
         }
 
         demosSection.classList.remove("invisible");
-        createHandLandmarker();
+        createLandmarkers();
 
         const video = videoRef.current;
         const canvasElement = canvasElementRef.current;
