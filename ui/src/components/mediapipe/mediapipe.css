@@ -1,0 +1,14 @@
+.invisible {
+    display: none;
+}
+
+video {
+    clear: both;    
+}
+
+button.btn {
+    margin: 20px;
+    padding: 10px;
+    background-color: #4e83e5;
+    color: white;
+}
