@@ -3,7 +3,13 @@
 }
 
 video {
-    clear: both;    
+    clear: both; 
+}
+#webcam2d
+{
+    transform: rotateY(180deg);
+    -webkit-transform:rotateY(180deg); /* Safari and Chrome */
+    -moz-transform:rotateY(180deg); /* Firefox */
 }
 
 button.btn {
@@ -13,18 +19,11 @@ button.btn {
     color: white;
 }
 
-#webcam
-{
-    margin: 0;
-    padding: 0;
-    width: 66%;
-}
-
-.output_canvas {
+#output_canvas2d {
     transform: rotateY(180deg);
     -webkit-transform:rotateY(180deg); /* Safari and Chrome */
     -moz-transform:rotateY(180deg); /* Firefox */
     margin: 0;
     padding: 0;
-    width: 33%;
+    width: 1280px;
 }
