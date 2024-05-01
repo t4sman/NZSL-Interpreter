@@ -1,11 +1,6 @@
 .invisible {
     display: none;
 }
-
-video {
-    clear: both;    
-}
-
 button.btn {
     margin: 20px;
     padding: 10px;
@@ -15,8 +10,7 @@ button.btn {
 
 #webcam
 {
-    margin: 0;
-    padding: 0;
+    clear: both;
     width: 66%;
 }
 
@@ -24,7 +18,6 @@ button.btn {
     transform: rotateY(180deg);
     -webkit-transform:rotateY(180deg); /* Safari and Chrome */
     -moz-transform:rotateY(180deg); /* Firefox */
-    margin: 0;
-    padding: 0;
+    
     width: 33%;
 }

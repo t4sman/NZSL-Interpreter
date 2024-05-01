@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import './mediapipe.css';
+import './MediaPipe3D.css';
 import { FilesetResolver, HandLandmarker, PoseLandmarker } from '@mediapipe/tasks-vision';
 import * as THREE from 'three';
 
@@ -54,7 +54,7 @@ const PINKY_PIP = 18;
 const PINKY_DIP = 19;
 const PINKY_TIP = 20;
 
-const MediaPipe = () => {
+const MediaPipe3D = () => {
     const videoRef = useRef(null);
     const canvasElementRef = useRef(null);
     const webcambutton = useRef(null);
@@ -72,12 +72,6 @@ const MediaPipe = () => {
         let runningMode = "VIDEO";
         let enableWebcamButton = webcambutton.current;
         let webcamRunning = false;
-        let enablePose = poseEsti.current;
-        let poseRunning = false;
-        let enableHand = handEsti.current;
-        let handRunning = false;
-        let videoButton = videobutton.current;
-        let videoOn = true;
 
         // Before we can use HandLandmarker class we must wait for it to finish
         // loading. Machine Learning models can be large and take a moment to
@@ -118,9 +112,6 @@ const MediaPipe = () => {
 
         if (hasGetUserMedia()) {
             enableWebcamButton.addEventListener("click", toggleCam);
-            enablePose.addEventListener("click", togglePoseEstimation);
-            enableHand.addEventListener("click", toggleHandEstimation);
-            videoButton.addEventListener("click", togglebgVideo);
         } else {
             console.warn("getUserMedia() is not supported by your browser");
         }
@@ -147,47 +138,7 @@ const MediaPipe = () => {
             });
         }
 
-        function togglePoseEstimation() {
-            if (!poseLandmarker) {
-                console.log("Wait! objectDetector not loaded yet.");
-                return;
-            }
-
-            if (poseRunning) {
-                poseRunning = false;
-                enablePose.textContent = "Turn on Pose Estimations";
-            } else {
-                poseRunning = true;
-                enablePose.textContent = "Turn off Pose Estimations";
-            }
-        }
-
-        function toggleHandEstimation() {
-            if (!handLandmarker) {
-                console.log("Wait! objectDetector not loaded yet.");
-                return;
-            }
-
-            if (handRunning) {
-                handRunning = false;
-                enableHand.textContent = "Turn on Hand Estimation";
-            } else {
-                handRunning = true;
-                enableHand.textContent = "Turn off Hand Estimation";
-            }
-        }
-
-        function togglebgVideo() {
-            if (videoOn) {
-                videoOn = false;
-                video.classList.add("invisible");
-                videoButton.textContent = "Turn on Background Video";
-            } else {
-                videoOn = true;
-                video.classList.remove("invisible");
-                videoButton.textContent = "Turn off Background Video";
-            }
-        }
+        
 
         let lastVideoTime = -1;
 
@@ -326,18 +277,9 @@ const MediaPipe = () => {
                 <button id="webcamButton" ref={webcambutton} className="btn">
                     Turn on Webcam
                 </button>
-                <button id="poseEstimationButton"  ref={poseEsti} className="btn">
-                    Turn on Pose Estimation
-                </button>
-                <button id="handEstimationButton"  ref={handEsti} className="btn">
-                    Turn on Hand Estimation
-                </button>
-                <button id="backgroundVideoButton" ref={videobutton} className="btn">
-                    Turn off Background Video
-                </button>
             </div>
         </div>
     )
 }
 
-export default MediaPipe;
+export default MediaPipe3D;
