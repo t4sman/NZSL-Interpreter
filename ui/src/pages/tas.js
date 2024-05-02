@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navbar, MediaPipe, Search } from '../components';
+import { Navbar, MediaPipe } from '../components';
 import { Header } from '../containers';
 
 
@@ -8,7 +8,7 @@ const tas = () => {
     <div className=''>
       <div className='gradient__bg'>
         <Navbar />
-        <Search />
+        <MediaPipe />
       </div>
       <div className='gradient__bg'>
       </div>

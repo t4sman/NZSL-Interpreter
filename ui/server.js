@@ -66,12 +66,23 @@ MongoClient.connect(MONGODB_URI, { useUnifiedTopology: true })
 
     app.get('/search', (req, res) => {
       const query = req.query.q;
-      english_signs.find(
-        { $english_sign: { $search: query } },
+      let signs = english_signs.find(
+        { 'english_signs': { $search: query } },
         { score: { $meta: "textScore" } }
       )
-      .sort({ score: { $meta: "textScore" } })
-      .toArray()
+
+      signs = signs.sort({ score: { $meta: "textScore" } }).limit(10);
+
+
+      
+      let profiles = eng_signs_to_profiles.find(
+        { 'english_signs': { $search: query } },
+        { score: { $meta: "textScore" } }
+      )
+
+      
+
+      signs.toArray()
       .then(results => {
         res.send(results);
       })
