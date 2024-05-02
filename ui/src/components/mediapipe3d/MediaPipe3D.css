@@ -1,20 +1,20 @@
 .invisible {
     display: none;
 }
-button.btn {
+#cambutton {
     margin: 20px;
     padding: 10px;
     background-color: #4e83e5;
     color: white;
 }
 
-#webcam
+#webcam3d
 {
     clear: both;
     width: 66%;
 }
 
-.output_canvas {
+#output_canvas3d {
     transform: rotateY(180deg);
     -webkit-transform:rotateY(180deg); /* Safari and Chrome */
     -moz-transform:rotateY(180deg); /* Firefox */

@@ -1,26 +1,24 @@
 const tf = require('@tensorflow/tfjs-node');
 const fs = require('fs');
 const fetch = require('node-fetch');
-const backend = require('./backend/Backend');
+const backend = require('./Backend');
 
 
-const encoderModelPath = 'ai/encoder_model.keras';
-const decoderModelPath = 'ai/decoder_model.keras';
-const EOS = 0;
-let SOS;
 
-backend.getNumberOfSigns().then(numberOfSigns => {
-    SOS = parseInt(numberOfSigns) + 1;
-    // Rest of your code that depends on SOS goes here
-});
-const encoderModel = await tf.loadLayersModel('file://' + encoderModelPath);
-const decoderModel = await tf.loadLayersModel('file://' + decoderModelPath);
-
-
-    
 
 // Now you can use these models for inference
-function decodeSequence(inputSeq) {
+async function decodeSequence(inputSeq) {
+    const encoderModelPath = 'ai/encoder_model.keras';
+    const decoderModelPath = 'ai/decoder_model.keras';
+    const EOS = 0;
+    let SOS;
+
+    backend.getNumberOfSigns().then(numberOfSigns => {
+        SOS = parseInt(numberOfSigns) + 1;
+        // Rest of your code that depends on SOS goes here
+    });
+    const encoderModel = await tf.loadLayersModel('file://' + encoderModelPath);
+    const decoderModel = await tf.loadLayersModel('file://' + decoderModelPath);
     // Encode the input as state vectors.
     const statesValue = encoderModel.predict(inputSeq);
 
@@ -62,6 +60,8 @@ function decodeSequence(inputSeq) {
         lastTokenIndex = sampledTokenIndex;
     }
 
+    
+
     return decodedSequence;
 }
 
@@ -71,4 +71,3 @@ function decodeSequence(inputSeq) {
 const inputSeq = tf.tensor(); // Replace with your input sequence
 const decodeSequence = await loadModels();
 const decodedSeq = decodeSequence(inputSeq);
-console.log(decodedSeq);

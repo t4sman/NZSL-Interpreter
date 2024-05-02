@@ -1,15 +1,11 @@
-
-
 .invisible {
     display: none;
 }
 
 
-.container {
+.mp2d {
     display: flex;
     flex-direction: row;
-    
-    
 }
 
 .box {
@@ -57,7 +53,7 @@
     flex-direction: column;
     background-color: green;
 }
-.btn {
+.mpbtn {
     margin-top: rem ;
     margin-bottom: 0.25rem ;
     color: #fff; /* text */

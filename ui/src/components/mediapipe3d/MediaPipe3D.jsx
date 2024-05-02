@@ -179,7 +179,7 @@ const MediaPipe3D = () => {
                         const landmark = poseresults.worldLandmarks[0][j];
                         //check if they are not null
                         if (landmark.x !== null && landmark.y !== null && landmark.z !== null) {
-                            console.log("landmark: ", landmark);
+                            
                             posePoints.push(new THREE.Vector3((landmark.x * -1), (landmark.y * -1), landmark.z));
                         } else {
                             posePoints.push(false);
@@ -198,8 +198,7 @@ const MediaPipe3D = () => {
                             const line = new THREE.Line(lineGeometry, lineMaterial);
                             scene.add(line);
                         }
-                    }
-                    console.log("done drawing pose");
+                    };
                 }
 
                 let handPoints;
@@ -268,13 +267,13 @@ const MediaPipe3D = () => {
 
     return (
         <div id="demos" className="invisible container" ref={demosSectionRef}>
-            <div style={{ position: "relative" }}>
+            <div>
                 <div>
-                <video id="webcam" ref={videoRef} autoPlay playsInline></video>
-                <canvas className="output_canvas" id="output_canvas" ref={canvasElementRef}></canvas>
+                <video id="webcam3d" ref={videoRef} autoPlay playsInline></video>
+                <canvas className="output_canvas3d" id="output_canvas3d" ref={canvasElementRef}></canvas>
                 </div>
                 <br></br>
-                <button id="webcamButton" ref={webcambutton} className="btn">
+                <button id="camButton" ref={webcambutton} className="btn btn-primary">
                     Turn on Webcam
                 </button>
             </div>
