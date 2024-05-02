@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import { RiMenu3Line, RiCloseLine } from 'react-icons/ri';
 import './navbar.css';
-import logo from '../../assets/logo.svg';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const Menu = () => (
   <>
-  <p><a href="/">Home</a></p>
+  <p><a href="/"><i class="bi bi-camera"></i></a></p>
+ 
+  <p><a href="#possibility"><i class="bi bi-book-half"></i></a></p>
+  <p><a href="#learning"><i class="bi bi-motherboard"></i></a></p>
+  <p><a href="#lib"><i class="bi bi-collection"></i></a></p>
+  <p><a href="#tutorial">Tutorial</a></p>
   <p><a href="/jonnyPage">jonnyPage</a></p>
   <p><a href="/tasPage">tasman</a></p>
   <p><a href="/tunPage">tun</a></p>
-  <p><a href="#possibility">My Learning</a></p>
-  <p><a href="#learning">Team</a></p>
-  <p><a href="#lib">Library</a></p>
-  <p><a href="#tutorial">Tutorial</a></p>
   </>
 )
 

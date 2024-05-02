@@ -1,7 +1,8 @@
 import React from 'react';
-import { Navbar, Brand, CTA,} from './components';
-import { Footer, Blog, Possibility, Features, WhatGPT3, Header } from './containers';
+import { Navbar, MediaPipe} from './components';
+import { Footer,  Features,  Header } from './containers';
 import './App.css';
+import TranslationBox from './components/translationBox/TranslationBox';
 const App = () => {
 return (
 	<div className='App'>
@@ -9,13 +10,11 @@ return (
 			<Navbar />
 			<Header />
 		</div>
+		
 		<div className='gradient__bg'>	
-			<Brand />
-			<WhatGPT3 />
 			<Features />
-			<Possibility />
-			<CTA />
-			<Blog />
+		</div>
+		<div className='gradient__bg'>
 			<Footer />
 		</div>
 	</div>

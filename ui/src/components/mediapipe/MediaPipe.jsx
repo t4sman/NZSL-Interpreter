@@ -68,7 +68,9 @@ const MediaPipe = () => {
         } else {
             console.warn("getUserMedia() is not supported by your browser");
         }
+        
 
+        // camera code
         function toggleCam(event) {
 
             if (webcamRunning) {
@@ -228,23 +230,34 @@ const MediaPipe = () => {
 
     return (
         <div id="demos" className="invisible container" ref={demosSectionRef}>
-            <div style={{ position: "relative" }}>
-                <video id="webcam" style={{ position: "absolute" }} ref={videoRef} autoPlay playsInline></video>
-                <canvas className="output_canvas" id="output_canvas" ref={canvasElementRef} style={{ position: "absolute", left: "0px", top: "0px" }}></canvas>
-                <button id="webcamButton" ref={webcambutton} className="btn" style={{ position: "absolute", left: "20px", top: "20px" }}>
-                    Turn on Webcam
-                </button>
-                <button id="poseEstimationButton"  ref={poseEsti} className="btn" style={{ position: "absolute", left: "20px", top: "70px" }}>
-                    Turn on Pose Estimation
-                </button>
-                <button id="handEstimationButton"  ref={handEsti} className="btn" style={{ position: "absolute", left: "20px", top: "120px" }}>
-                    Turn on Hand Estimation
-                </button>
-                <button id="backgroundVideoButton" ref={videobutton} className="btn" style={{ position: "absolute", left: "20px", top: "170px" }}>
-                    Turn off Background Video
-                </button>
+            <div className='container'>
+                <div className='box'>
+                    <video id="webcam" ref={videoRef} autoPlay playsInline></video>
+                    <canvas className="output_canvas" id="output_canvas" ref={canvasElementRef}></canvas>
+                </div>
+                <div className='box2' >
+                    
+                    <button id="poseEstimationButton" ref={poseEsti} className="btn">
+                        Turn on Pose Estimation
+                    </button>
+                    <button id="handEstimationButton" ref={handEsti} className="btn">
+                        Turn on Hand Estimation
+                    </button>
+                    <button id="backgroundVideoButton" ref={videobutton} className="btn">
+                        Turn off Background Video
+                    </button>
+                    <button id="modeSwitch"  className="btn">
+                        Toggle Screen record / cam record
+                    </button>
+                    <button id="webcamButton" ref={webcambutton} className="btn">
+                        Turn on Webcam
+                    </button>
+                </div>
             </div>
         </div>
+
+       
+        
     )
 }
 
