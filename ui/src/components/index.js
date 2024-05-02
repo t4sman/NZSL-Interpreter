@@ -8,5 +8,6 @@ export { default as image} from '../data/image';
 //export { default as Camera } from './camera/Camera';
 export { default as CameraFeed } from './camerafeed/CameraFeed';
 export { default as MediaPipe } from './mediapipe/MediaPipe';
+export { default as MediaPipe3D } from './mediapipe3d/MediaPipe3D';
 export { default as TranslationBox } from './translationBox/TranslationBox';
 
