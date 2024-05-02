@@ -6,3 +6,5 @@ export { default as Navbar } from './navbar/Navbar';
 export { default as SearchBar } from './SearchBar/SearchBar';
 export { default as image} from '../data/image';
 //export { default as Camera } from './camera/Camera';
+export { default as CameraFeed } from './camerafeed/CameraFeed';
+export { default as MediaPipe } from './mediapipe/MediaPipe';
