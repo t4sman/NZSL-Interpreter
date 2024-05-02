@@ -16,3 +16,28 @@
     
     margin-right: 5rem;
 }
+
+.gpt3__header-image img {
+    height: 200px;
+    width: auto;
+}
+
+
+.header__button button {
+
+    padding: 0.5rem 1rem;
+    color: #fff; /* text */
+    background: #ff4820; /* button */
+    left: 1153px;
+    top: 55px;
+    font-family: var(--font-family);
+    font-weight: 500;
+    border-radius: 5px;
+    font-size: 18px;
+    line-height: 25px;
+    border:0;
+    outline: none;
+    cursor: pointer;
+    margin-left: 2rem;
+
+}

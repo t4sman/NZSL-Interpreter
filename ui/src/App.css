@@ -56,9 +56,19 @@ a{
 }
 
 
+.camera__container__section {
+    flex: 1;
+    display: flex; 
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    
+    
+}
 
 
 
+ 
 @keyframes scale-up-center{0%{transform:scale(.5)}100%{transform:scale(1)}}
 
 @media screen and (max-width: 550px){

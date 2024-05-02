@@ -229,6 +229,7 @@ const MediaPipe = () => {
 
 
     return (
+
         <div id="demos" className="invisible container mp2d" ref={demosSectionRef}>
             <div className='container'>
                 <div className='box'>
@@ -236,7 +237,6 @@ const MediaPipe = () => {
                     <canvas className="output_canvas" id="output_canvas" ref={canvasElementRef}></canvas>
                 </div>
                 <div className='box2' >
-                    
                     <button id="poseEstimationButton" ref={poseEsti} className="mpbtn btn">
                         Turn on Pose Estimation
                     </button>

@@ -1,0 +1,29 @@
+.typing-container {
+    
+    height: 200px; /* Adjust height as needed */
+}
+
+.text-container {
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 300px; /* Ensure text stays within parent div */
+}
+
+.typed-text {
+    display: inline-block;
+    overflow: hidden;
+    white-space: pre-wrap;
+    
+    margin: 0 auto; /* Center text */
+    animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
+}
+  
+@keyframes typing {
+    from { width: 0  }
+    to { width: 100% }
+}
+  
+@keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: orange }
+}
