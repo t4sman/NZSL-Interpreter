@@ -229,27 +229,27 @@ const MediaPipe = () => {
 
 
     return (
-        <div id="demos" className="invisible container" ref={demosSectionRef}>
+
+        <div id="demos" className="invisible container mp2d" ref={demosSectionRef}>
             <div className='container'>
                 <div className='box'>
                     <video id="webcam" ref={videoRef} autoPlay playsInline></video>
                     <canvas className="output_canvas" id="output_canvas" ref={canvasElementRef}></canvas>
                 </div>
                 <div className='box2' >
-                    
-                    <button id="poseEstimationButton" ref={poseEsti} className="btn">
+                    <button id="poseEstimationButton" ref={poseEsti} className="mpbtn btn">
                         Turn on Pose Estimation
                     </button>
-                    <button id="handEstimationButton" ref={handEsti} className="btn">
+                    <button id="handEstimationButton" ref={handEsti} className="mpbtn btn">
                         Turn on Hand Estimation
                     </button>
-                    <button id="backgroundVideoButton" ref={videobutton} className="btn">
+                    <button id="backgroundVideoButton" ref={videobutton} className="mpbtn btn">
                         Turn off Background Video
                     </button>
-                    <button id="modeSwitch"  className="btn">
+                    <button id="modeSwitch"  className="mpbtn btn">
                         Toggle Screen record / cam record
                     </button>
-                    <button id="webcamButton" ref={webcambutton} className="btn">
+                    <button id="webcamButton" ref={webcambutton} className="mpbtn btn">
                         Turn on Webcam
                     </button>
                 </div>
