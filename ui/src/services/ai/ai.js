@@ -1,10 +1,10 @@
 import * as tf from '@tensorflow/tfjs';
-import * as backend from '../backend/Backend';
+const backend = require('../backend/Backend');
 
 // Now you can use these models for inference
 export async function setupInference(){
-    const encoderModelPath = 'http://localhost:3000/models/encoder_model/model.json';
-    const decoderModelPath = 'http://localhost:3000/models/decoder_model/model.json';    
+    const encoderModelPath = '/models/encoder_model/model.json';
+    const decoderModelPath = '/models/decoder_model/model.json';    
     let encoderModel;
     let decoderModel;
     try {
@@ -49,6 +49,7 @@ export async function setupInference(){
             if (sampledTokenIndex === EOS) {
                 break;
             }
+
             decodedSequence.push(sampledTokenIndex);
 
             // Update the target sequence (of length 1).

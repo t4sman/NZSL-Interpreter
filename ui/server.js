@@ -93,26 +93,44 @@ MongoClient.connect(MONGODB_URI, { useUnifiedTopology: true })
     }
 
     app.get('/search', async (req, res) => {
+      // create text index on english_signs collection
       english_signs.createIndex({ english_sign: 'text' });
+
+      // search for the query in the english_signs collection
       const search = req.query.q;
+
       let query = { $text: { $search: search } };
       let projection = { id: 1, english_sign: 1, _id: 0 };
 
+      // find the matching signs
       const englishsigns = await english_signs.find(query,projection).limit(10).toArray();
 
       // for each matching sign, find the entry in the join table
       let profilesPromises = englishsigns.map(async sign => {
         let joinprofiles = await eng_signs_to_profiles.find({ english_id: sign.id }).toArray();
+
         return joinprofiles.map(profile => ({...profile, name: sign.english_sign}));
       });
 
       let profiles = await Promise.all(profilesPromises);
       profiles = profiles.flat();
 
+      
+      
+
+
+
       // for each entry in the join table, find the sign profile
       let signprofilesPromises = profiles.map(async profile => {
         let signprofile = await sign_profile.findOne({ id: profile.profile_id });
-        return {...signprofile, name: profile.name};
+        let joinmaori = await maori_signs_to_profiles.find({ profile_id: profile.profile_id }).toArray();
+        let maoriPromises = joinmaori.map(async maori => {
+          let maorisigns = await maori_signs.find({ id: maori.maori_id }).toArray();
+          let maoriWords = maorisigns.map(maori => maori.maori_sign);
+          return maoriWords;
+        });
+        let maoriWords = await Promise.all(maoriPromises);
+        return {...signprofile, name: profile.name, maori: maoriWords.flat()};
       });
 
       let signprofiles = await Promise.all(signprofilesPromises);
