@@ -1,0 +1,22 @@
+*{
+    color: #fff;
+}
+
+.footer__cellCase{
+    display: flex;
+    
+    flex-direction: row;
+    margin-top: 5rem;
+    padding: 5rem;
+    
+}
+
+
+.footer__cell{
+    
+    
+    flex: 0 25%;
+    margin-right: 5rem;
+
+   
+}
