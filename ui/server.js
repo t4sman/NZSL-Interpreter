@@ -1,10 +1,15 @@
 const MongoClient = require('mongodb').MongoClient
 const express = require('express');
 const bodyParser = require('body-parser');
+const path = require('path');
 const cors = require('cors');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+
+app.use('/models', express.static(path.join(__dirname, 'models')));
+
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -31,6 +36,8 @@ MongoClient.connect(MONGODB_URI, { useUnifiedTopology: true })
     const topics = db.collection('topics');
     const usages = db.collection('usages');
     const maori_signs = db.collection('maori_signs');
+
+    
 
     const eng_signs_to_profiles = db.collection('eng_signs_to_profiles');
     const maori_signs_to_profiles = db.collection('maori_signs_to_profiles');
@@ -64,30 +71,52 @@ MongoClient.connect(MONGODB_URI, { useUnifiedTopology: true })
         .catch(error => console.error(error));
     });
 
-    app.get('/search', (req, res) => {
-      const query = req.query.q;
-      let signs = english_signs.find(
-        { 'english_signs': { $search: query } },
-        { score: { $meta: "textScore" } }
-      )
+    app.get('/sign_profile/:id', (req, res) => {
+      const id = parseInt(req.params.id);
+      getSignProfile(id)
+      .then(result => {
+        res.send(result);
+      }).catch(error => console.error(error));
+    });
 
-      signs = signs.sort({ score: { $meta: "textScore" } }).limit(10);
+    function getSignProfile(id) { //get a sign profile by id and return the words for that sign
+      let profile = sign_profile.findOne({ id: id });
 
+      let englishjoin = eng_signs_to_profiles.findOne({ profile_id: id });
 
-      
-      let profiles = eng_signs_to_profiles.find(
-        { 'english_signs': { $search: query } },
-        { score: { $meta: "textScore" } }
-      )
+      let englishwords = english_signs.findOne({ id: englishjoin.english_id }, { _id: 0, id: 0, english_sign: 1 });
 
-      
+      return {
+        profile: profile.toArray(),
+        englishwords: englishwords.toArray()
+      };
+    }
 
-      signs.toArray()
-      .then(results => {
-        res.send(results);
-      })
-      .catch(error => console.error(error));
+    app.get('/search', async (req, res) => {
+      english_signs.createIndex({ english_sign: 'text' });
+      const search = req.query.q;
+      let query = { $text: { $search: search } };
+      let projection = { id: 1, english_sign: 1, _id: 0 };
+
+      const englishsigns = await english_signs.find(query,projection).limit(10).toArray();
+
+      // for each matching sign, find the entry in the join table
+      let profilesPromises = englishsigns.map(async sign => {
+        let joinprofiles = await eng_signs_to_profiles.find({ english_id: sign.id }).toArray();
+        return joinprofiles.map(profile => ({...profile, name: sign.english_sign}));
+      });
+
+      let profiles = await Promise.all(profilesPromises);
+      profiles = profiles.flat();
+
+      // for each entry in the join table, find the sign profile
+      let signprofilesPromises = profiles.map(async profile => {
+        let signprofile = await sign_profile.findOne({ id: profile.profile_id });
+        return {...signprofile, name: profile.name};
+      });
+
+      let signprofiles = await Promise.all(signprofilesPromises);
+
+      res.send(signprofiles);
     });
   });
-
-  //chur

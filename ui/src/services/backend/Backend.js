@@ -3,7 +3,7 @@ export function getNumberOfSigns() {
     .then(res => res.text());
 }
 
-export function search(query) {
+export function Search(query) {
   return fetch(`/search?q=${query}`)
     .then(res => res.json());
 }
@@ -13,9 +13,14 @@ export function getTopics() {
     .then(res => res.json());
 }
 
-export function getSignProfiles() {
-  return fetch('/sign_profile')
+export function getSignProfile(id) {
+  return fetch(`/sign_profile/${id}`)
     .then(res => res.json());
 }
+
+export default {getSignProfile, getNumberOfSigns, getTopics, Search};
+
+
+
 
 

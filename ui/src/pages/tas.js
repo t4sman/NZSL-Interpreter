@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navbar, MediaPipe3D, MediaPipe} from '../components';
+import { Navbar, MediaPipe3D, TranslationBox} from '../components';
 import { Header } from '../containers';
 
 
@@ -12,8 +12,7 @@ const tas = () => {
         <h1>MediaPipe World Landmarks</h1>
         <MediaPipe3D />
 
-        <h1>MediaPipe Normalised Landmarks</h1>
-        <MediaPipe />
+        <TranslationBox />
       </div>
       <div className='gradient__bg'>
       </div>

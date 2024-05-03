@@ -4,6 +4,7 @@ export { default as CTA } from './cta/CTA';
 export { default as Feature } from './feature/Feature';
 export { default as Navbar } from './navbar/Navbar';
 export { default as SearchBar } from './SearchBar/SearchBar';
+export { default as SearchPage } from './searchpage/SearchPage';
 export { default as image} from '../data/image';
 //export { default as Camera } from './camera/Camera';
 export { default as CameraFeed } from './camerafeed/CameraFeed';

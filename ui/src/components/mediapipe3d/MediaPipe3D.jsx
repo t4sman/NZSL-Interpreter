@@ -2,6 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import './MediaPipe3D.css';
 import { FilesetResolver, HandLandmarker, PoseLandmarker } from '@mediapipe/tasks-vision';
 import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import setupInference from '../../services/ai/ai';
 
 const POSE = 0;
 
@@ -161,7 +163,15 @@ const MediaPipe3D = () => {
         const renderer = new THREE.WebGLRenderer({ canvas: canvasElementRef.current });
         renderer.setSize(360, 640);
 
+        // Assuming camera and renderer are already defined
+        let controls = new OrbitControls(camera, renderer.domElement);
+
         const lineMaterial = new THREE.LineBasicMaterial({ color: 0xff0000, linewidth: 2 });
+
+        let numframes = 0;
+        let frames = []
+
+        let isairunning = false;
 
         async function predictWebcam() {
             let startTimeMs = performance.now();
@@ -180,7 +190,7 @@ const MediaPipe3D = () => {
                         //check if they are not null
                         if (landmark.x !== null && landmark.y !== null && landmark.z !== null) {
                             
-                            posePoints.push(new THREE.Vector3((landmark.x * -1), (landmark.y * -1), landmark.z));
+                            posePoints.push(new THREE.Vector3(((landmark.x) * -1), ((landmark.y) * -1), ((landmark.z) * -1)));
                         } else {
                             posePoints.push(false);
                         }
@@ -227,7 +237,7 @@ const MediaPipe3D = () => {
                             //check if they are not null
                             if (landmark && landmark.x !== null && landmark.y !== null && landmark.z !== null) {
                                 
-                                handPoints.push(new THREE.Vector3(((landmark.x + deltax) * -1), ((landmark.y + deltay) * -1), ((landmark.z + deltaz))));
+                                handPoints.push(new THREE.Vector3(((landmark.x + deltax) * -1), ((landmark.y + deltay) * -1), ((landmark.z + deltaz) * -1)));
                             } else {
                                 handPoints.push(false);
                             }
@@ -247,22 +257,101 @@ const MediaPipe3D = () => {
                             }
                         }
                     }
-                }
-    
-                
+                }     
+
+                // numframes++;
+                // let pointsthisframe = [];
 
                 
+                // if (poseresults.worldLandmarks[0] === undefined)
+                // {
+                //     isairunning = false;
+                // } else if (poseresults.worldLandmarks[0][LEFTWRIST].y < -0.1 || poseresults.worldLandmarks[0][RIGHTWRIST].y < -0.1) {
+                //     if (isairunning === false) {
+                //         isairunning = true;
+                //     }
+                // } else {
+                //     isairunning = false;
+                // }
+                
+
+                // if (isairunning === false && frames.length > 0) {
+                //     let inference = setupInference().then((inference) => {
+                //         let prediction = inference(frames);
+                //         let englishword = []
+                //         for (let i = 0; i < prediction.length; i++) {
+                //             let sign = prediction[i];
+                //             let word = getSignProfile(sign);
+                //             englishword.push(word);
+                //         }
+
+                //         for (let i = 0; i < englishword.length; i++) {
+                //             document.getElementById("prediction-text").innerHTML += englishword.english_sign + " ";
+                //         }
+                //     });
+                    
+                //     frames = [];
+                // }
+
+                // if (poseresults.worldLandmarks[0] !== undefined)
+                // {
+                //     for (let i = 0; i < poseresults.worldLandmarks[0].length; i++) {
+                //         const landmark = poseresults.worldLandmarks[0][i];
+                //         if (landmark.x !== null && landmark.y !== null && landmark.z !== null) {
+                //             if (i < 23)
+                //             {
+                //                 pointsthisframe.push([landmark.x, landmark.y, landmark.z]);
+                //             }
+                //         }
+                //     }
+                //     let lefthandpoints = [];
+                //     let righthandpoints = [];
+    
+                //     let leftset = false;
+                //     let rightset = false;
+    
+                //     for (let i = 0; i < handresults.worldLandmarks.length; i++) {
+                //         for (let j = 0; j < handresults.worldLandmarks[i].length; j++) {
+                //             if (handresults.handedness[i][0].displayName === 'Right') {
+                //                 const landmark = handresults.worldLandmarks[i][j];
+                //                 if (rightset) {
+                //                     lefthandpoints.push([landmark.x, landmark.y, landmark.z]);
+                //                 }
+                //                 if (landmark.x !== null && landmark.y !== null && landmark.z !== null) {
+                //                     righthandpoints.push([landmark.x, landmark.y, landmark.z]);
+                //                     rightset = true;
+                //                 } else {
+                //                     righthandpoints.push([0,0,0])
+                //                 }
+                //             } else {
+                //                 const landmark = handresults.worldLandmarks[i][j];
+                //                 if (leftset) {
+                //                     righthandpoints.push([landmark.x, landmark.y, landmark.z]);
+                //                 }
+                //                 if (landmark.x !== null && landmark.y !== null && landmark.z !== null) {
+                //                     lefthandpoints.push([landmark.x, landmark.y, landmark.z]);
+                //                     leftset = true;
+                //                 } else {
+                //                     lefthandpoints.push([0,0,0])
+                //                 }
+                //             }
+                //         }
+                //     }
+                //     if (isairunning === true && pointsthisframe.length > 0) {
+                //         frames.push(pointsthisframe);
+                //     }
+                // }
                 
                 renderer.render(scene, camera);
+                
             }
-
             // Call this function again to keep predicting when the browser is ready.
             if (webcamRunning === true) {
                 requestAnimationFrame(predictWebcam);
             }
         }
 
-    }, [videoRef, canvasElementRef, webcambutton, demosSectionRef, poseEsti, handEsti, videobutton]);
+    }, [videoRef, canvasElementRef, webcambutton, demosSectionRef]);
 
 
     return (

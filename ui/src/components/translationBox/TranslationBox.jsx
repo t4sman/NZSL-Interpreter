@@ -9,7 +9,7 @@ const TranslationBox = () => {
   
     useEffect(() => {
       // Simulate typing effect
-      const textArray = 'Text from backend  Text from backend Text from backend Text from backend'.split('');
+      let textArray = 'Text from backend  Text from backend Text from backend Text from backend'.split('');
       let currentIndex = 0;
       const intervalId = setInterval(() => {
         if (currentIndex < textArray.length) {
@@ -31,7 +31,7 @@ const TranslationBox = () => {
             {loading ? (
             <p>Loading...</p>
             ) : (
-            <p className="typed-text">{text}</p>
+            <p id="prediction-text" className="typed-text">{text}</p>
             )}
         </div>
     </div>
