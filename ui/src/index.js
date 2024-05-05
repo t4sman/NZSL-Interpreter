@@ -7,6 +7,7 @@ import {createBrowserRouter, RouterProvider, Route } from 'react-router-dom';
 import JonnyPage from "./pages/jonnyPage";
 import TasmansPage from "./pages/tas";
 import TunsPage from './pages/tun';
+import LoginSignupPage from './pages/loginSignup';
 
 const router =  createBrowserRouter([
     {
@@ -24,6 +25,10 @@ const router =  createBrowserRouter([
     {
         path: "tunPage",
         element: <TunsPage />
+    },
+    {
+        path: "loginSignup",
+        element: <LoginSignupPage />
     },
   
 ]);

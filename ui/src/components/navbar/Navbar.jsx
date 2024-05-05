@@ -19,6 +19,11 @@ const Menu = () => (
 
 const Navbar = () => 
 {
+
+  const handleSignUp = () => {
+    window.location.href = "/loginSignup";
+  };
+  
   const [toggleMenu, setToggleMenu] = useState(false);
   return (
     <div className='gpt3__navbar'>
@@ -32,7 +37,7 @@ const Navbar = () =>
       </div>
       <div className='gpt3__navbar-sign'>
         <p>Sign In</p>
-        <button type="button">Sign up</button>
+        <button type="button" onClick={handleSignUp}>Sign Up</button>
       </div>
 
       
@@ -48,7 +53,7 @@ const Navbar = () =>
               <Menu />
               <div className='gpt3__navbar-menu_containier-links-sign'>
                 <p>Sign In</p>
-                <button type="button">Sign Up</button>
+                <button type="button" onClick={handleSignUp}>Sign Up</button>
               </div>
             </div>
           </div>
