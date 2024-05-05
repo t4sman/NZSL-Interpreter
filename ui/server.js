@@ -107,7 +107,7 @@ MongoClient.connect(MONGODB_URI, { useUnifiedTopology: true })
 
       // for each matching sign, find the entry in the join table
       let profilesPromises = englishsigns.map(async sign => {
-        let joinprofiles = await eng_signs_to_profiles.distinct("profile_id",{ english_id: sign.id }).toArray();
+        let joinprofiles = await eng_signs_to_profiles.find({ english_id: sign.id }).toArray();
 
         return joinprofiles.map(profile => ({...profile, name: sign.english_sign}));
       });

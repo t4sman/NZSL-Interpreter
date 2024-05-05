@@ -7,32 +7,36 @@ const SearchPage = () => {
   const [searchResult, setSearchResult] = useState(null);
   const [userImageList, setUserImageList] = useState([]);
 
+  let debounceTimeout = null;
+
   const handleSearch = (query) => {
+    // Clear the previous timeout if it exists
+    if (debounceTimeout) clearTimeout(debounceTimeout);
 
-    let results = backend.Search(query);
-    console.log('Search query:', query);
-    console.log(results)
+    // Set a new timeout
+    debounceTimeout = setTimeout(() => {
+      let results = backend.Search(query);
+      console.log('Search query:', query);
+      console.log(results);
 
-    
+      results.then((response) => {
+        const displaysearch = document.getElementById('searchresults');
+        displaysearch.innerHTML = '';
 
-    results.then((response) => {
-      const displaysearch = document.getElementById('searchresults');
-    
-      displaysearch.innerHTML = '';
-    
-      if (response.length > 0) {
-        response.forEach(result => {
-          displaysearch.innerHTML +=  `<div class="searchvideo">
-                                          <video src="https://nzsl-signbank-media-production.s3.amazonaws.com/glossvideo/${result.site_id}/${result.video_demo}" alt="${result.name}" style="max-width: 20%; height: auto; margin-right: 10px;" controls></video>
-                                          <p>${result.name}</p>
-                                          <p>${result.maori}</p>
-                                          <br>
-                                      </div>`;
-        });
-      } else {
-        displaysearch.innerHTML = '<p>No results found</p>';
-      }
-    });
+        if (response.length > 0) {
+          response.forEach(result => {
+            displaysearch.innerHTML +=  `<div class="searchvideo">
+                                            <video src="https://nzsl-signbank-media-production.s3.amazonaws.com/glossvideo/${result.site_id}/${result.video_demo}" alt="${result.name}" style="max-width: 20%; height: auto; margin-right: 10px;" controls></video>
+                                            <p>${result.name}</p>
+                                            <p>${result.maori}</p>
+                                            <br>
+                                        </div>`;
+          });
+        } else {
+          displaysearch.innerHTML = '<p>No results found</p>';
+        }
+      });
+    }, 500); // 500 milliseconds delay
   };
 
 
