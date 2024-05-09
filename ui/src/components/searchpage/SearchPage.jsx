@@ -27,7 +27,7 @@ const SearchPage = () => {
           response.forEach(result => {
             
             displaysearch.innerHTML +=  `<div class="searchvideo">
-                                            <video src="https://nzsl-signbank-media-production.s3.amazonaws.com/glossvideo/${result.site_id}/${result.video_demo}" alt="${result.english}" style="max-width: 20%; height: auto; margin-right: 10px;" controls></video>
+                                            <video src="https://nzsl-signbank-media-production.s3.amazonaws.com/glossvideo/${result.site_id}/${result.video_demo}" alt="${result.name}" style="max-width: 20%; height: auto; margin-right: 10px;" controls></video>
                                             <p>${result.name}</p>
                                             <p>${result.maori}</p>
                                             <br>
