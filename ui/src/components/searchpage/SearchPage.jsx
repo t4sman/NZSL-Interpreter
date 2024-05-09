@@ -25,8 +25,9 @@ const SearchPage = () => {
 
         if (response.length > 0) {
           response.forEach(result => {
+            
             displaysearch.innerHTML +=  `<div class="searchvideo">
-                                            <video src="https://nzsl-signbank-media-production.s3.amazonaws.com/glossvideo/${result.site_id}/${result.video_demo}" alt="${result.name}" style="max-width: 20%; height: auto; margin-right: 10px;" controls></video>
+                                            <video src="https://nzsl-signbank-media-production.s3.amazonaws.com/glossvideo/${result.site_id}/${result.video_demo}" alt="${result.english}" style="max-width: 20%; height: auto; margin-right: 10px;" controls></video>
                                             <p>${result.name}</p>
                                             <p>${result.maori}</p>
                                             <br>
@@ -35,6 +36,19 @@ const SearchPage = () => {
         } else {
           displaysearch.innerHTML = '<p>No results found</p>';
         }
+        // if (response.length > 0) {
+        //   response.forEach(result => {
+        //     let profile = result.profile
+        //     displaysearch.innerHTML +=  `<div class="searchvideo">
+        //                                     <video src="https://nzsl-signbank-media-production.s3.amazonaws.com/glossvideo/${profile.site_id}/${profile.video_demo}" alt="${profile.english}" style="max-width: 20%; height: auto; margin-right: 10px;" controls></video>
+        //                                     <p>${result.english}</p>
+        //                                     <p>${result.maori}</p>
+        //                                     <br>
+        //                                 </div>`;
+        //   });
+        // } else {
+        //   displaysearch.innerHTML = '<p>No results found</p>';
+        // }
       });
     }, 500); // 500 milliseconds delay
   };
