@@ -2,7 +2,7 @@
 This is a work-in-progress New Zealand Sign Language (NZSL) Interpreter. The goal of this project is to leverage modern technologies to create a functional and educational experience for users who are interested in learning NZSL.
 
 <h2>Technologies </h2>
-The application is primarily built using React, a popular JavaScript library for building user interfaces. The backend is powered by Express, a minimal and flexible Node.js web application framework.
+The application is primarily built using React, a popular JavaScript library for building user interfaces. The backend is powered by Express, a minimal and flexible Node.js web application framework. The model was trained in Python using keras, and tensorflow
 
 <h2>Machine Learning</h2>
 A key feature of this application is the use of a machine learning model for sign language classification. This model is trained using Python, a powerful language widely used in the data science and machine learning community.
