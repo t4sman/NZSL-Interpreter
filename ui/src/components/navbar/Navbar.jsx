@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { RiMenu3Line, RiCloseLine } from 'react-icons/ri';
 import './navbar.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import LoginSignup from '../LoginSignup/LoginSignup';
 
 const Menu = () => (
   <>
@@ -14,6 +15,7 @@ const Menu = () => (
   <p><a href="/jonnyPage">jonnyPage</a></p>
   <p><a href="/tasPage">tasman</a></p>
   <p><a href="/tunPage">tun</a></p>
+  <p><a href="/howto">How to use</a></p>
   </>
 )
 
@@ -49,6 +51,7 @@ const Navbar = () =>
               <div className='gpt3__navbar-menu_containier-links-sign'>
                 <p>Sign In</p>
                 <button type="button">Sign Up</button>
+                <LoginSignup />
               </div>
             </div>
           </div>
