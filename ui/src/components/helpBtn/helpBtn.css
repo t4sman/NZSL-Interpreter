@@ -1,0 +1,43 @@
+/* src/QuestionMarkIcon.css */
+.question-mark-container {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.question-mark {
+font-size: 16px;
+font-weight: bold;
+background-color: #000000;
+border-radius: 50%;
+width: 20px;
+height: 20px;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+
+.tooltip {
+position: absolute;
+bottom: 25px;
+left: 50%;
+transform: translateX(-50%);
+background-color: #333;
+color: #ffffff;
+padding: 5px 10px;
+border-radius: 3px;
+white-space: nowrap;
+z-index: 1;
+display: none; /* Default to hidden */
+
+}
+
+.question-mark-container:hover .tooltip-text {
+display:flex; /* Show on hover */
+background-color: rgb(192, 192, 192);
+color:#000000;
+max-width: 500px;
+padding: 1rem;
+}
+
+

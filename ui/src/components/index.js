@@ -12,3 +12,6 @@ export { default as MediaPipe } from './mediapipe/MediaPipe';
 export { default as MediaPipe3D } from './mediapipe3d/MediaPipe3D';
 export { default as TranslationBox } from './translationBox/TranslationBox';
 export { default as LoginSignup} from './LoginSignup/LoginSignup';
+export {default as ScreenRecord } from "./screenRecord/ScreenRecord";
+export { default as HelpBtn} from './helpBtn/HelpBtn';
+

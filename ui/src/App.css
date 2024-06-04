@@ -21,6 +21,7 @@ a{
 
     /* safari 5.1+,chrome 10+ */
     background: -webkit-linear-gradient(90deg, rgba(0, 50, 46, 1) 0%, rgba(3, 20, 63, 1) 100%);
+    background: -webkit-linear-gradient(90deg, rgba(100, 50, 46, 1) 0%, rgba(3, 20, 63, 1) 100%);
 
     /* opera 11.10+ */
     background: -o-linear-gradient(90deg, rgba(0, 50, 46, 1) 0%, rgba(3, 20, 63, 1) 100%);
@@ -68,8 +69,15 @@ a{
 
 
 
- 
+@keyframes puff-in-center{0%{transform:scale(2);filter:blur(4px);opacity:0}100%{transform:scale(1);filter:blur(0);opacity:1}}
 @keyframes scale-up-center{0%{transform:scale(.5)}100%{transform:scale(1)}}
+
+.puff-in-center{
+    animation:puff-in-center .5s cubic-bezier(.47,0.000,.745,.715);
+    background-color: antiquewhite;
+    color: black;
+    
+}
 
 @media screen and (max-width: 550px){
     .section__padding{
