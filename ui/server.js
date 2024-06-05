@@ -3,9 +3,16 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const cors = require('cors');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+
+require('dotenv').config();
+const BACKENDPORT = process.env.BACKENDPORT;
+const MONGODB_URL = process.env.MONGODB_URL;
+const SECRET_KEY = process.env.SECRET_KEY;
 
 
 app.use('/models', express.static(path.join(__dirname, 'models')));
@@ -13,20 +20,41 @@ app.use('/models', express.static(path.join(__dirname, 'models')));
 
 app.use(bodyParser.json());
 app.use(cors());
+app.use(cookieParser());
 
 app.get('/test', (req, res) => {
   res.send('Hello from MERN stack!');
 });
 
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}.`);
+app.listen(BACKENDPORT, () => {
+  console.log(`Server listening on port ${BACKENDPORT}.`);
 });
 
-require('dotenv').config();
 
-const MONGODB_URI = process.env.MONGODB_URI;
+function authenticateToken(req, res, next) {
+  const token = req.cookies.token;
+  if (!token) return res.status(401).send({ message: 'No token provided' });
 
-MongoClient.connect(MONGODB_URI, { useUnifiedTopology: true })
+  jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+    if (err) return res.status(403).send({ message: 'Failed to authenticate token' });
+    req.userId = decoded.userId;
+    req.username = decoded.username;
+    next();
+  });
+}
+
+module.exports = authenticateToken;
+
+// Check Auth Route
+app.get('/check-auth', authenticateToken, (req, res) => {
+  res.send({ username: req.username });
+});
+
+
+
+
+
+MongoClient.connect(MONGODB_URL, { useUnifiedTopology: true })
   .then(client => {
     console.log('Connected to Database');
     const db = client.db('NZSL');
@@ -42,6 +70,51 @@ MongoClient.connect(MONGODB_URI, { useUnifiedTopology: true })
     const eng_signs_to_profiles = db.collection('eng_signs_to_profiles');
     const maori_signs_to_profiles = db.collection('maori_signs_to_profiles');
     const usages_to_profiles = db.collection('usages_to_profiles');
+
+    const user_details = db.collection('user_details');
+
+    
+
+
+    // Signup Route
+    app.post('/signup', async (req, res) => {
+      const { username, email, password } = req.body;
+
+      console.log(username);
+      console.log(email);
+      try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const user = { username, email, password: hashedPassword };
+        await user_details.insertOne(user);
+
+        const token = jwt.sign({ userId: user._id, username: user.username }, SECRET_KEY, { expiresIn: '1h' });
+        res.status(201).send({ message: 'User created successfully', username: user.username, token: token });
+      } catch (error) {
+        res.status(500).send({ message: 'Error creating user: ' + error});
+      }
+    });
+
+    // Login Route
+    app.post('/login', async (req, res) => {
+      const { email, password } = req.body;
+      try {
+        const user = await user_details.findOne({ email });
+        if (!user || !(await bcrypt.compare(password, user.password))) {
+          return res.status(401).send({ message: 'Invalid email or password' });
+        }
+
+        const token = jwt.sign({ userId: user._id, username: user.username }, SECRET_KEY, { expiresIn: '1h' });
+        res.send({ message: 'Logged in successfully', username: user.username, token: token });
+      } catch (error) {
+        res.status(500).send({ message: 'Error logging in' });
+      }
+    });
+
+    // Logout Route
+    app.post('/logout', (req, res) => {
+      res.clearCookie('token');
+      res.send({ message: 'Logged out successfully' });
+    });
 
     //get topics
     app.get('/listtopics', (_, res) => {

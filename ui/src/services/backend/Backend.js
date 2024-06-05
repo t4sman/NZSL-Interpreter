@@ -18,6 +18,10 @@ export function getSignProfile(id) {
     .then(res => res.json());
 }
 
+
+
+
+
 export default {getSignProfile, getNumberOfSigns, getTopics, Search};
 
 
