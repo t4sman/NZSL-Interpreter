@@ -14,6 +14,7 @@ const Menu = () => (
   <p><a href="/jonnyPage">jonnyPage</a></p>
   <p><a href="/tasPage">tasman</a></p>
   <p><a href="/tunPage">tun</a></p>
+  <p><a href="/howto">How to use</a></p>
   </>
 )
 

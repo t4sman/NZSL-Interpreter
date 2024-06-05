@@ -8,6 +8,7 @@ import JonnyPage from "./pages/jonnyPage";
 import TasmansPage from "./pages/tas";
 import TunsPage from './pages/tun';
 import LoginSignupPage from './pages/loginSignup';
+import HowToPage from './pages/HowToPage';
 
 const router =  createBrowserRouter([
     {
@@ -30,6 +31,10 @@ const router =  createBrowserRouter([
         path: "loginSignup",
         element: <LoginSignupPage />
     },
+    {
+        path: "howto",
+        element: <HowToPage />
+    }
   
 ]);
 const root = ReactDOM.createRoot(document.getElementById('root'));
