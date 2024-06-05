@@ -51,8 +51,9 @@ const MediaPipe = () => {
             });
         }
 
-        demosSection.classList.remove("invisible");
+        
         createLandmarkers();
+        demosSection.classList.remove("invisible");
 
         const video = videoRef.current;
         const canvasElement = canvasElementRef.current;

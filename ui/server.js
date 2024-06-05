@@ -131,7 +131,8 @@ MongoClient.connect(MONGODB_URI, { useUnifiedTopology: true })
       });
 
       let signprofiles = await Promise.all(signprofilesPromises);
-
+      console.log("searched: " + search)
       res.send(signprofiles);
     });
   });
+

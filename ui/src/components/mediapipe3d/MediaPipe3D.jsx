@@ -3,12 +3,7 @@ import './MediaPipe3D.css';
 import { FilesetResolver, HandLandmarker, PoseLandmarker } from '@mediapipe/tasks-vision';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import setupInference from '../../services/ai/ai';
-
-const POSE = 0;
-
-const LHAND = 23;
-const RHAND = LHAND + 21;
+const backend = require('../../services/backend/Backend');
 
 const NOSE = 0;
 const LEFTEYEINNER = 1;
@@ -92,7 +87,7 @@ const MediaPipe3D = () => {
                 min_tracking_confidence: 0,
                 min_hand_detection_confidence: 0,
                 min_detection_confidence: 0.1,
-                
+
 
             });
             poseLandmarker = await PoseLandmarker.createFromOptions(vision, {
@@ -108,7 +103,7 @@ const MediaPipe3D = () => {
         createLandmarkers();
 
         const video = videoRef.current;
-        const canvasElement = canvasElementRef.current;
+        
 
         const hasGetUserMedia = () => !!navigator.mediaDevices?.getUserMedia;
 
@@ -125,8 +120,10 @@ const MediaPipe3D = () => {
             }
 
             webcamRunning = true;
-            
+
             enableWebcamButton.classList.add("invisible");
+            document.getElementById('inferenceelements').style.display = 'block';
+
 
             // getUsermedia parameters.
             const constraints = {
@@ -140,7 +137,7 @@ const MediaPipe3D = () => {
             });
         }
 
-        
+
 
         let lastVideoTime = -1;
 
@@ -150,10 +147,10 @@ const MediaPipe3D = () => {
         // Create a new Three.js scene, camera, and renderer
         const scene = new THREE.Scene();
 
-        
-        
+
+
         const fov = 50;
-        const aspect = 9/16; // the canvas default
+        const aspect = 9 / 16; // the canvas default
         const near = 0.1;
         const far = 5;
         const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
@@ -163,43 +160,55 @@ const MediaPipe3D = () => {
         const renderer = new THREE.WebGLRenderer({ canvas: canvasElementRef.current });
         renderer.setSize(360, 640);
 
-        // Assuming camera and renderer are already defined
         let controls = new OrbitControls(camera, renderer.domElement);
 
-        const lineMaterial = new THREE.LineBasicMaterial({ color: 0xff0000, linewidth: 2 });
+        const lineMaterial = new THREE.LineBasicMaterial({ color: 0xff0000, linewidth: 5 });
 
-        let numframes = 0;
-        let frames = []
 
-        let isairunning = false;
+        let framecounter = 1;
 
+        let posepoints = [];
+        let lefthandpoints = [];
+        let righthandpoints = [];
         async function predictWebcam() {
+            
             let startTimeMs = performance.now();
             if (lastVideoTime !== video.currentTime) {
+                framecounter++;
                 lastVideoTime = video.currentTime;
                 let handresults = await handLandmarker.detectForVideo(video, startTimeMs);
                 let poseresults = await poseLandmarker.detectForVideo(video, startTimeMs);
+                
 
 
                 scene.clear();
-                let posePoints;
-                if (poseresults && poseresults.worldLandmarks[0] !== undefined) {
-                    posePoints = [];
+                let poseVectors;
+                let thisposepoints = [];
+                
+                if (poseresults?.worldLandmarks[0]) {
+                    poseVectors = [];
+                    
                     for (let j = 0; j < poseresults.worldLandmarks[0].length; j++) {
                         const landmark = poseresults.worldLandmarks[0][j];
+
+                        
                         //check if they are not null
                         if (landmark.x !== null && landmark.y !== null && landmark.z !== null) {
-                            
-                            posePoints.push(new THREE.Vector3(((landmark.x) * -1), ((landmark.y) * -1), ((landmark.z) * -1)));
+                            if (j < 23) thisposepoints.push([landmark.x, landmark.y, landmark.z]);
+
+                            poseVectors.push(new THREE.Vector3(((landmark.x) * -1), ((landmark.y) * -1), ((landmark.z) * -1)));
                         } else {
-                            posePoints.push(false);
+                            thisposepoints.push([0.0, 0.0, 0.0])
+                            poseVectors.push(false);
                         }
                     }
-                    
+
+                    posepoints.push(thisposepoints);
+
                     for (let i = 0; i < poseconnections.length; i++) {
                         const { start, end } = poseconnections[i];
-                        if (posePoints[start] && posePoints[end]) {
-                            const path = new THREE.CatmullRomCurve3([posePoints[start], posePoints[end]]);
+                        if (poseVectors[start] && poseVectors[end]) {
+                            const path = new THREE.CatmullRomCurve3([poseVectors[start], poseVectors[end]]);
                             const lineGeometry = new THREE.BufferGeometry();
 
                             // create a line from the path
@@ -209,25 +218,35 @@ const MediaPipe3D = () => {
                             scene.add(line);
                         }
                     };
+                } else {
+                    let defaultvalues = Array(23).fill([0.0,0.0,0.0]);
+                    posepoints.push(defaultvalues);
                 }
 
-                let handPoints;
+                let handVectors;
+                let leftset = false;
+                let rightset = false;
 
-                if (handresults != null && handresults.worldLandmarks != null) {
+                if (handresults?.worldLandmarks && poseresults?.worldLandmarks[0]) {
+                    
                     for (let i = 0; i < handresults.worldLandmarks.length; i++) { //for each hand detected,
-                        handPoints = [];
+                        handVectors = [];
+                        let thishandpoints = [];
                         let wristmarker;
                         let deltax;
                         let deltay;
                         let deltaz;
-                        if (handresults.handedness[i][0].displayName === 'Right') {
-                            wristmarker = poseresults.worldLandmarks[0][LEFTWRIST]; //get the wrist marker from the pose estimation
+
+                        let isright = false;
+                        if (handresults.handedness[i][0].displayName === 'Left') {
+
+                            wristmarker = poseresults.worldLandmarks[0][RIGHTWRIST]; //get the wrist marker from the pose estimation
                             deltax = wristmarker.x - handresults.worldLandmarks[i][WRIST].x;
                             deltay = wristmarker.y - handresults.worldLandmarks[i][WRIST].y;
                             deltaz = wristmarker.z - handresults.worldLandmarks[i][WRIST].z;
 
-                        } else if (handresults.handedness[i][0].displayName === 'Left') {
-                            wristmarker = poseresults.worldLandmarks[0][RIGHTWRIST]; //get the wrist marker from the pose estimation
+                        } else if (isright = (handresults.handedness[i][0].displayName === 'Right')) {
+                            wristmarker = poseresults.worldLandmarks[0][LEFTWRIST]; //get the wrist marker from the pose estimation
                             deltax = wristmarker.x - handresults.worldLandmarks[i][WRIST].x;
                             deltay = wristmarker.y - handresults.worldLandmarks[i][WRIST].y;
                             deltaz = wristmarker.z - handresults.worldLandmarks[i][WRIST].z;
@@ -236,114 +255,72 @@ const MediaPipe3D = () => {
                             const landmark = handresults.worldLandmarks[i][j];
                             //check if they are not null
                             if (landmark && landmark.x !== null && landmark.y !== null && landmark.z !== null) {
-                                
-                                handPoints.push(new THREE.Vector3(((landmark.x + deltax) * -1), ((landmark.y + deltay) * -1), ((landmark.z + deltaz) * -1)));
+                                thishandpoints.push([landmark.x, landmark.y, landmark.z])
+                                handVectors.push(new THREE.Vector3(((landmark.x + deltax) * -1), ((landmark.y + deltay) * -1), ((landmark.z + deltaz) * -1)));
                             } else {
-                                handPoints.push(false);
+                                thishandpoints.push([0.0, 0.0, 0.0])
+                                handVectors.push(false);
                             }
-                            
                         }
+
+                        if (isright) {
+                            if (!rightset) {
+                                righthandpoints.push(thishandpoints);
+                                rightset = true;
+                            } else {
+                                lefthandpoints.push(thishandpoints);
+                                leftset = true;
+                            }
+                        } else {
+                            if (!leftset) {
+                                lefthandpoints.push(thishandpoints);
+                                leftset = true;
+                            } else {
+                                righthandpoints.push(thishandpoints);
+                                rightset = true;
+                            }
+                        }
+
                         for (let i = 0; i < handconnections.length; i++) {
                             const { start, end } = handconnections[i];
-                            if (handPoints[start] && handPoints[end]) {
-                                const path = new THREE.CatmullRomCurve3([handPoints[start], handPoints[end]]);
+                            if (handVectors[start] && handVectors[end]) {
+                                const path = new THREE.CatmullRomCurve3([handVectors[start], handVectors[end]]);
                                 const lineGeometry = new THREE.BufferGeometry();
-    
+
                                 // create a line from the path
                                 lineGeometry.setFromPoints(path.getPoints(5));
-    
+
                                 const line = new THREE.Line(lineGeometry, lineMaterial);
                                 scene.add(line);
                             }
                         }
-                    }
-                }     
+                }
 
-                // numframes++;
-                // let pointsthisframe = [];
+                }
+                if (!leftset) {
+                    lefthandpoints.push(Array(21).fill([0.0,0.0,0.0]));
+                }
+                if (!rightset) {
+                    righthandpoints.push(Array(21).fill([0.0,0.0,0.0]));
+                }
 
-                
-                // if (poseresults.worldLandmarks[0] === undefined)
-                // {
-                //     isairunning = false;
-                // } else if (poseresults.worldLandmarks[0][LEFTWRIST].y < -0.1 || poseresults.worldLandmarks[0][RIGHTWRIST].y < -0.1) {
-                //     if (isairunning === false) {
-                //         isairunning = true;
-                //     }
-                // } else {
-                //     isairunning = false;
-                // }
-                
-
-                // if (isairunning === false && frames.length > 0) {
-                //     let inference = setupInference().then((inference) => {
-                //         let prediction = inference(frames);
-                //         let englishword = []
-                //         for (let i = 0; i < prediction.length; i++) {
-                //             let sign = prediction[i];
-                //             let word = getSignProfile(sign);
-                //             englishword.push(word);
-                //         }
-
-                //         for (let i = 0; i < englishword.length; i++) {
-                //             document.getElementById("prediction-text").innerHTML += englishword.english_sign + " ";
-                //         }
-                //     });
-                    
-                //     frames = [];
-                // }
-
-                // if (poseresults.worldLandmarks[0] !== undefined)
-                // {
-                //     for (let i = 0; i < poseresults.worldLandmarks[0].length; i++) {
-                //         const landmark = poseresults.worldLandmarks[0][i];
-                //         if (landmark.x !== null && landmark.y !== null && landmark.z !== null) {
-                //             if (i < 23)
-                //             {
-                //                 pointsthisframe.push([landmark.x, landmark.y, landmark.z]);
-                //             }
-                //         }
-                //     }
-                //     let lefthandpoints = [];
-                //     let righthandpoints = [];
-    
-                //     let leftset = false;
-                //     let rightset = false;
-    
-                //     for (let i = 0; i < handresults.worldLandmarks.length; i++) {
-                //         for (let j = 0; j < handresults.worldLandmarks[i].length; j++) {
-                //             if (handresults.handedness[i][0].displayName === 'Right') {
-                //                 const landmark = handresults.worldLandmarks[i][j];
-                //                 if (rightset) {
-                //                     lefthandpoints.push([landmark.x, landmark.y, landmark.z]);
-                //                 }
-                //                 if (landmark.x !== null && landmark.y !== null && landmark.z !== null) {
-                //                     righthandpoints.push([landmark.x, landmark.y, landmark.z]);
-                //                     rightset = true;
-                //                 } else {
-                //                     righthandpoints.push([0,0,0])
-                //                 }
-                //             } else {
-                //                 const landmark = handresults.worldLandmarks[i][j];
-                //                 if (leftset) {
-                //                     righthandpoints.push([landmark.x, landmark.y, landmark.z]);
-                //                 }
-                //                 if (landmark.x !== null && landmark.y !== null && landmark.z !== null) {
-                //                     lefthandpoints.push([landmark.x, landmark.y, landmark.z]);
-                //                     leftset = true;
-                //                 } else {
-                //                     lefthandpoints.push([0,0,0])
-                //                 }
-                //             }
-                //         }
-                //     }
-                //     if (isairunning === true && pointsthisframe.length > 0) {
-                //         frames.push(pointsthisframe);
-                //     }
-                // }
-                
                 renderer.render(scene, camera);
-                
+
+                if (framecounter % 150 === 0) {
+                    let results = backend.predictSign([posepoints, lefthandpoints, righthandpoints]);
+
+                    results.then((response) => {
+                        let output = document.getElementById('predictionoutput');
+                        let out = response.join(" ");
+                        output.innerHTML += "<p class=\"prediction\">" + out + "</p>";
+                        output.scrollTop = output.scrollHeight;
+                    });
+
+                    posepoints = [];
+                    lefthandpoints = [];
+                    righthandpoints = [];
+                } 
+
             }
             // Call this function again to keep predicting when the browser is ready.
             if (webcamRunning === true) {
@@ -355,17 +332,19 @@ const MediaPipe3D = () => {
 
 
     return (
-        <div id="demos" className="invisible container" ref={demosSectionRef}>
-            <div>
-                <div>
-                <video id="webcam3d" ref={videoRef} autoPlay playsInline></video>
-                <canvas className="output_canvas3d" id="output_canvas3d" ref={canvasElementRef}></canvas>
+        <div id="demos" className="container" ref={demosSectionRef}>
+            <div id='inferenceelements'>
+                <div className="row align-items-end">
+                    <video id="webcam3d" className='col-lg-6 col-sm-12' ref={videoRef} autoPlay playsInline></video>
+                    <canvas className="output_canvas3d col-lg-6" id="output_canvas3d" ref={canvasElementRef}></canvas>
+                    <div id="predictionoutput" className="col-12">
+                    </div>
                 </div>
                 <br></br>
-                <button id="camButton" ref={webcambutton} className="btn btn-primary">
-                    Turn on Webcam
-                </button>
             </div>
+            <button id="camButton"  ref={webcambutton} className="btn btn-primary mt-5">
+                    Turn on Webcam
+            </button>
         </div>
     )
 }

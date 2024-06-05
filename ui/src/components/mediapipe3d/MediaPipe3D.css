@@ -11,13 +11,21 @@
 #webcam3d
 {
     clear: both;
-    width: 66%;
+}
+
+#predictionoutput
+{
+    overflow: scroll;
+    max-height: 400px;
+    width: 50%;
+}
+#inferenceelements
+{
+    display: none;
 }
 
 #output_canvas3d {
     transform: rotateY(180deg);
     -webkit-transform:rotateY(180deg); /* Safari and Chrome */
     -moz-transform:rotateY(180deg); /* Firefox */
-    
-    width: 33%;
 }
