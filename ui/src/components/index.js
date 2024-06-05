@@ -7,6 +7,7 @@ export { default as SearchBar } from './SearchBar/SearchBar';
 export { default as SearchPage } from './searchpage/SearchPage';
 export { default as image} from '../data/image';
 //export { default as Camera } from './camera/Camera';
+export {default as ToggleButton} from "./toggleButton/ToggleButton";
 export { default as CameraFeed } from './camerafeed/CameraFeed';
 export { default as MediaPipe } from './mediapipe/MediaPipe';
 export { default as MediaPipe3D } from './mediapipe3d/MediaPipe3D';
@@ -14,4 +15,3 @@ export { default as TranslationBox } from './translationBox/TranslationBox';
 export { default as LoginSignup} from './LoginSignup/LoginSignup';
 export {default as ScreenRecord } from "./screenRecord/ScreenRecord";
 export { default as HelpBtn} from './helpBtn/HelpBtn';
-

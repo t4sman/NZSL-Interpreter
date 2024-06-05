@@ -1,12 +1,13 @@
 import React from 'react';
 import './features.css';
-import { MediaPipe, TranslationBox } from '../../components';
+import { MediaPipe, TranslationBox, HelpBtn} from '../../components';
+
 
 const Features = () => {
   return (
     <div class="container">
       <div class="box">
-        <h1>Camera Capture</h1>
+        <h1>Camera Capture </h1>
         <MediaPipe />
       
       </div>

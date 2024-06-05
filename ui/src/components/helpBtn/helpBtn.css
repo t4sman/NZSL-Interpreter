@@ -17,27 +17,28 @@ justify-content: center;
 align-items: center;
 }
 
-.tooltip {
-position: absolute;
-bottom: 25px;
-left: 50%;
-transform: translateX(-50%);
-background-color: #333;
-color: #ffffff;
-padding: 5px 10px;
-border-radius: 3px;
-white-space: nowrap;
-z-index: 1;
-display: none; /* Default to hidden */
-
+.tooltip-text {
+    position: absolute;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgb(192, 192, 192);
+    color: #000000;
+    padding: 1rem;
+    border-radius: 3px;
+    white-space: nowrap;
+    z-index: 1000; /* Ensure the tooltip is in front of other elements */
+    display: none; /* Default to hidden */
+    pointer-events: none; /* Ensure the tooltip does not interfere with mouse events */
 }
 
 .question-mark-container:hover .tooltip-text {
-display:flex; /* Show on hover */
+display:block; /* Show on hover */
 background-color: rgb(192, 192, 192);
 color:#000000;
-max-width: 500px;
+max-width: 1500px;
 padding: 1rem;
+
 }
 
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './mediapipe.css';
 import { FilesetResolver, HandLandmarker, PoseLandmarker } from '@mediapipe/tasks-vision';
 
@@ -11,6 +11,10 @@ const MediaPipe = () => {
     const handEsti = useRef(null);
     const videobutton = useRef(null);
 
+    const [cameraMode, setCameraMode] = useState(true); // Initially camera mode
+    const [screenRecordMode, setScreenRecordMode] = useState(false);
+    const [mediaRecorder, setMediaRecorder] = useState(null);
+    const [recordedChunks, setRecordedChunks] = useState([]);
 
     useEffect(() => {
         const demosSection = demosSectionRef.current;
@@ -65,14 +69,13 @@ const MediaPipe = () => {
             enablePose.addEventListener("click", togglePoseEstimation);
             enableHand.addEventListener("click", toggleHandEstimation);
             videoButton.addEventListener("click", togglebgVideo);
+            document.getElementById("modeSwitch").addEventListener("click", toggleMode);
         } else {
             console.warn("getUserMedia() is not supported by your browser");
         }
-        
 
         // camera code
         function toggleCam(event) {
-
             if (webcamRunning) {
                 return;
             }
@@ -135,6 +138,53 @@ const MediaPipe = () => {
             }
         }
 
+        async function startScreenRecording() {
+            
+            try {
+                const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                const recorder = new MediaRecorder(stream);
+                recorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        setRecordedChunks([...recordedChunks, event.data]);
+                    }
+                };
+                recorder.onstop = () => {
+                    const recordedBlob = new Blob(recordedChunks, { type: 'video/webm' });
+                    const recordedUrl = URL.createObjectURL(recordedBlob);
+                    // Do something with the recorded video URL, like displaying it in a video element.
+                    console.log('Recording stopped:', recordedUrl);
+                };
+                recorder.start();
+                setMediaRecorder(recorder);
+            } catch (error) {
+                console.error('Error starting screen recording:', error);
+            }
+        }
+
+        function stopScreenRecording() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+            }
+        }
+
+        async function toggleMode() {
+            try {
+                if (cameraMode) {
+                    // Switch to screen recording mode
+                    setCameraMode(false);
+                    setScreenRecordMode(true);
+                    await startScreenRecording();
+                } else {
+                    // Switch to camera mode
+                    setCameraMode(true);
+                    setScreenRecordMode(false);
+                    stopScreenRecording();
+                }
+            } catch (error) {
+                console.error('Error toggling mode:', error);
+            }
+        }
+
         let lastVideoTime = -1;
         let handresults = undefined;
         let poseresults = undefined;
@@ -154,14 +204,26 @@ const MediaPipe = () => {
                 poseresults = await poseLandmarker.detectForVideo(video, startTimeMs);
             }
             canvasCtx.save();
-            
+
             if (!videoOn) {
                 canvasCtx.fillStyle = "blue";
-                canvasCtx.fillRect(0, 0, canvasElement.width, canvasElement.height, );
+                canvasCtx.fillRect(0, 0, canvasElement.width, canvasElement.height);
             } else {
                 canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+                canvasCtx.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
             }
-            if (poseRunning&&poseresults.landmarks) {
+
+            if (screenRecordMode && recordedChunks.length > 0) {
+                const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                const screenCaptureUrl = URL.createObjectURL(blob);
+                const screenCaptureVideo = document.createElement('video');
+                screenCaptureVideo.src = screenCaptureUrl;
+                screenCaptureVideo.addEventListener('loadedmetadata', () => {
+                    canvasCtx.drawImage(screenCaptureVideo, 0, 0, canvasElement.width, canvasElement.height);
+                });
+            }
+
+            if (poseRunning && poseresults.landmarks) {
                 for (const landmarks of poseresults.landmarks) {
                     poseconnections.forEach(connection => {
                         const { start, end } = connection;
@@ -188,7 +250,8 @@ const MediaPipe = () => {
                     });
                 }
             }
-            if (handRunning&&handresults.landmarks) {
+
+            if (handRunning && handresults.landmarks) {
                 for (const landmarks of handresults.landmarks) {
                     handconnections.forEach(connection => {
                         const { start, end } = connection;
@@ -214,7 +277,7 @@ const MediaPipe = () => {
                     });
                 }
             }
-            
+
             canvasCtx.restore();
 
             // Call this function again to keep predicting when the browser is ready.
@@ -225,11 +288,9 @@ const MediaPipe = () => {
             }
         }
 
-    }, [videoRef, canvasElementRef, webcambutton, demosSectionRef, poseEsti, handEsti, videobutton]);
-
+    }, [videoRef, canvasElementRef, webcambutton, demosSectionRef, poseEsti, handEsti, videobutton, cameraMode, recordedChunks]);
 
     return (
-
         <div id="demos" className="invisible container mp2d" ref={demosSectionRef}>
             <div className='container'>
                 <div className='box'>
@@ -246,8 +307,8 @@ const MediaPipe = () => {
                     <button id="backgroundVideoButton" ref={videobutton} className="mpbtn btn">
                         Turn off Background Video
                     </button>
-                    <button id="modeSwitch"  className="mpbtn btn">
-                        Toggle Screen record / cam record
+                    <button id="modeSwitch" className="mpbtn btn">
+                        {cameraMode ? "Switch to Screen Record" : "Switch to Camera"}
                     </button>
                     <button id="webcamButton" ref={webcambutton} className="mpbtn btn">
                         Turn on Webcam
@@ -255,10 +316,7 @@ const MediaPipe = () => {
                 </div>
             </div>
         </div>
-
-       
-        
-    )
+    );
 }
 
 export default MediaPipe;

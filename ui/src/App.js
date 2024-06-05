@@ -14,8 +14,8 @@ const App = () => {
       </div>
       <div className='gradient__bg'>  
         <Features />
-        <TranslationBox />
-        <HelpBtn tooltipText="Need help? try turning on the camera and start signing! Its as simple as that! " />
+        
+        
       </div>
       <div className='gradient__bg'>
         <Footer />
