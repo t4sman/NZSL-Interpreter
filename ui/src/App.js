@@ -3,12 +3,14 @@ import { Navbar, MediaPipe} from './components';
 import { Footer,  Features,  Header } from './containers';
 import './App.css';
 import TranslationBox from './components/translationBox/TranslationBox';
+import DarkMode from "./components/DarkMode/DarkMode";
 const App = () => {
 return (
 	<div className='App'>
 		<div className='gradient__bg'>
 			<Navbar />
 			<Header />
+			<DarkMode />  
 		</div>
 		
 		<div className='gradient__bg'>	

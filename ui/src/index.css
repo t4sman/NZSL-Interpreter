@@ -12,3 +12,11 @@
   --color-text: #81AFDD;
   --color-subtext: #FF8A71;
 }
+
+/*attn*/
+[data-theme="dark"] {
+  --body_background: #282c34;
+  --body_color: white;
+  --link_color: cyan;
+
+}
