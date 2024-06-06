@@ -3,7 +3,6 @@ import './MediaPipe3D.css';
 import { FilesetResolver, HandLandmarker, PoseLandmarker } from '@mediapipe/tasks-vision';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import setupInference from '../../services/ai/ai';
 
 const POSE = 0;
 
