@@ -35,7 +35,7 @@ const JohnnyPage = () => {
   };
 
   return (
-    <div>
+    <div className='gradient__bg'>
       <Navbar />
       <SearchPage 
         onSearch={handleSearch} 
