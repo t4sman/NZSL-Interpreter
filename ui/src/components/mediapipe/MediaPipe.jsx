@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './mediapipe.css';
 import { FilesetResolver, HandLandmarker, PoseLandmarker } from '@mediapipe/tasks-vision';
+import HelpBtn from '../helpBtn/HelpBtn';
 
 const MediaPipe = () => {
     const videoRef = useRef(null);
@@ -313,6 +314,7 @@ const MediaPipe = () => {
                     <button id="webcamButton" ref={webcambutton} className="mpbtn btn">
                         Turn on Webcam
                     </button>
+                    <HelpBtn />
                 </div>
             </div>
         </div>

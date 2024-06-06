@@ -5,7 +5,7 @@ const ScreenRecord = () => {
     const mediaRecorderRef = useRef(null);
     const chunksRef = useRef([]);
 
-    const startRecording = () => {
+    const startRecording = (videoelement) => {
         navigator.mediaDevices.getDisplayMedia({ video: true })
             .then(stream => {
                 mediaRecorderRef.current = new MediaRecorder(stream);
