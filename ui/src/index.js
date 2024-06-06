@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import JonnyPage from "./pages/jonnyPage";
 import TasmansPage from "./pages/tas";
 import TunsPage from './pages/tun';
+import HowToPage from './pages/HowToPage';
 import Auth from './pages/Auth';
 import AuthProvider from 'react-auth-kit';
 import createStore from 'react-auth-kit/createStore';
@@ -29,7 +30,7 @@ root.render(
                     <Route path="/" element={<App />} />
                     <Route path="/jonnyPage" element={<JonnyPage />} />
                     <Route path="/tasPage" element={<TasmansPage />} />
-                    <Route path="/tunPage" element={<TunsPage />} />
+                    <Route path="/howto" element={<HowToPage />} />
                     <Route path="/auth" element={<Auth />} />
                 </Routes>
             </Router>
