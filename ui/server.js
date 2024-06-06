@@ -11,7 +11,7 @@ const app = express();
 
 require('dotenv').config();
 const BACKENDPORT = process.env.BACKENDPORT;
-const MONGODB_URL = process.env.MONGODB_URL;
+const MONGODB_URI = process.env.MONGODB_URI;
 const SECRET_KEY = process.env.SECRET_KEY;
 
 
@@ -54,7 +54,7 @@ app.get('/check-auth', authenticateToken, (req, res) => {
 
 
 
-MongoClient.connect(MONGODB_URL, { useUnifiedTopology: true })
+MongoClient.connect(MONGODB_URI, { useUnifiedTopology: true })
   .then(client => {
     console.log('Connected to Database');
     const db = client.db('NZSL');
