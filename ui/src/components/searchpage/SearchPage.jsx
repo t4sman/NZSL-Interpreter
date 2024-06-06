@@ -1,100 +1,152 @@
-import React, { useState } from 'react';
-import { SearchBar, Navbar } from '..';
-import imageData from '../../data/image';
-const backend = require('../../services/backend/Backend');
+import React, { useState, useEffect } from 'react';
 
-const SearchPage = () => {
-  const [searchResult, setSearchResult] = useState(null);
-  const [userImageList, setUserImageList] = useState([]);
+const SearchPage = ({ onSearch, searchResult = [], learnVideos = [], learntVideos = [], onSaveLearn, onSaveLearnt }) => {
+  const [searchQuery, setSearchQuery] = useState('');
 
-  let debounceTimeout = null;
+  useEffect(() => {
+    console.log('Search Results:', searchResult);
+  }, [searchResult]);
 
-  const handleSearch = (query) => {
-    // Clear the previous timeout if it exists
-    if (debounceTimeout) clearTimeout(debounceTimeout);
-
-    // Set a new timeout
-    debounceTimeout = setTimeout(() => {
-      let results = backend.Search(query);
-      console.log('Search query:', query);
-      console.log(results);
-
-      results.then((response) => {
-        const displaysearch = document.getElementById('searchresults');
-        displaysearch.innerHTML = '';
-
-        if (response.length > 0) {
-          response.forEach(result => {
-            displaysearch.innerHTML +=  `<div class="searchvideo">
-                                            <video src="https://nzsl-signbank-media-production.s3.amazonaws.com/glossvideo/${result.site_id}/${result.video_demo}" alt="${result.name}" style="max-width: 20%; height: auto; margin-right: 10px;" controls></video>
-                                            <p>${result.name}</p>
-                                            <p>${result.maori}</p>
-                                            <br>
-                                        </div>`;
-          });
-        } else {
-          displaysearch.innerHTML = '<p>No results found</p>';
-        }
-      });
-    }, 500); // 500 milliseconds delay
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
   };
 
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    console.log('Search Query:', searchQuery);
+    onSearch(searchQuery);
+  };
 
-
-  const handleAddImage = () => {
-    if (searchResult) {
-      setUserImageList([...userImageList, searchResult]);
-    }
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    onSearch(''); // Reset search results
   };
 
   return (
     <div>
-      <div className='gradient__bg' style={{margin: '30px'}}>
+      <div className='gradient__bg' style={{ margin: '30px' }}>
         <h1>My Learning Pathway</h1>
-
-        
-        <p style={{ marginBottom: '10px', textAlign: 'center' }}>Enter your desired Sign:</p>
-
-        
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
-          <div style={{ marginRight: '10px' }}>
-            <SearchBar onSearch={handleSearch} />
-          </div>
-          {/* <button
-            onClick={handleAddImage}
-            style={{
+        <form onSubmit={handleSearchSubmit}>
+          <p style={{ marginBottom: '10px', textAlign: 'center' }}>Enter your desired Sign:</p>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              style={{ marginRight: '10px', padding: '10px', fontSize: '16px', color: 'black' }}
+            />
+            <button type="submit" style={{
               height: '40px',
               width: '120px',
-              backgroundColor: 'transparent',
+              backgroundColor: '#2196F3',
               color: 'white',
               border: 'none',
               borderRadius: '5px',
               cursor: 'pointer',
               fontSize: '16px',
               fontWeight: 'bold',
-            }}
-          >
-            Add Sign
-          </button> */}
-        </div>
-
-        
+            }}>
+              Search
+            </button>
+            <button type="button" onClick={handleClearSearch} style={{
+              height: '40px',
+              width: '120px',
+              backgroundColor: '#FF5733',
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer',
+              fontSize: '16px',
+              fontWeight: 'bold',
+              marginLeft: '10px'
+            }}>
+              Clear
+            </button>
+          </div>
+        </form>
         <div id="searchresults">
+          {searchResult && searchResult.length > 0 ? (
+            searchResult.map(result => (
+              <div key={result._id} className="searchvideo" style={{ marginBottom: '20px' }}>
+                <video
+                  src={`https://nzsl-signbank-media-production.s3.amazonaws.com/glossvideo/${result.site_id}/${result.video_demo}`}
+                  alt={result.name}
+                  style={{ maxWidth: '20%', height: 'auto', marginRight: '10px' }}
+                  controls
+                />
+                <p>{result.name}</p>
+                <p>{result.maori}</p>
+                <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                  <button onClick={() => onSaveLearn(result)} style={{
+                    backgroundColor: '#4CAF50', // Green background
+                    border: 'none',
+                    color: 'white',
+                    padding: '10px 20px',
+                    margin: '5px',
+                    cursor: 'pointer',
+                    borderRadius: '4px',
+                    fontSize: '14px',
+                  }}>
+                    Learn
+                  </button>
+                  <button onClick={() => onSaveLearnt(result)} style={{
+                    backgroundColor: '#2196F3', // Blue background
+                    border: 'none',
+                    color: 'white',
+                    padding: '10px 20px',
+                    margin: '5px',
+                    cursor: 'pointer',
+                    borderRadius: '4px',
+                    fontSize: '14px',
+                  }}>
+                    Learnt
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p></p>
+          )}
         </div>
-
-        {/* Display user image list */}
-        <h2>My Sign List</h2>
-        <ul>
-          {userImageList.map((image, index) => (
-            <li key={index}>
-              <img
-                src={image}
-                alt={`User-added object ${index + 1}`}
-                style={{ maxWidth: '18%', height: 'auto' }}
-              />
-            </li>
-          ))}
-        </ul>
+        <div style={{ margin: '30px' }}>
+          <h2>My Sign List</h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div style={{ width: '45%' }}>
+              <h3>Learn</h3>
+              <ul>
+                {learnVideos.map((video, index) => (
+                  <li key={index}>
+                    <video
+                      src={`https://nzsl-signbank-media-production.s3.amazonaws.com/glossvideo/${video.site_id}/${video.video_demo}`}
+                      alt={video.name}
+                      style={{ maxWidth: '100%', height: 'auto' }}
+                      controls
+                    />
+                    <p>{video.name}</p>
+                    <p>{video.maori}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div style={{ width: '45%' }}>
+              <h3>Learnt</h3>
+              <ul>
+                {learntVideos.map((video, index) => (
+                  <li key={index}>
+                    <video
+                      src={`https://nzsl-signbank-media-production.s3.amazonaws.com/glossvideo/${video.site_id}/${video.video_demo}`}
+                      alt={video.name}
+                      style={{ maxWidth: '100%', height: 'auto' }}
+                      controls
+                    />
+                    <p>{video.name}</p>
+                    <p>{video.maori}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

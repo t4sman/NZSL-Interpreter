@@ -15,3 +15,5 @@ export { default as TranslationBox } from './translationBox/TranslationBox';
 export { default as LoginSignup} from './LoginSignup/LoginSignup';
 export {default as ScreenRecord } from "./screenRecord/ScreenRecord";
 export { default as HelpBtn} from './helpBtn/HelpBtn';
+export { default as Instructions} from './Instructions/Instructions';
+export { default as DarkMode} from './DarkMode/DarkMode';

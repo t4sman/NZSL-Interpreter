@@ -8,6 +8,15 @@
 body{
     background: var(--color-bg)
 }
+/*attn*/
+.App-header{
+    background-color: var(--body_background);
+    color: var(--body_color);
+}
+/*attn*/
+.App-link {
+    color: var(--link_color);
+}
 
 a{
     color: unset;

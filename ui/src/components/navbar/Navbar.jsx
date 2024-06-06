@@ -10,10 +10,11 @@ const Menu = () => (
   <p><a href="#possibility"><i class="bi bi-book-half"></i></a></p>
   <p><a href="#learning"><i class="bi bi-motherboard"></i></a></p>
   <p><a href="#lib"><i class="bi bi-collection"></i></a></p>
-  <p><a href="#tutorial">Tutorial</a></p>
-  <p><a href="/jonnyPage">jonnyPage</a></p>
-  <p><a href="/tasPage">tasman</a></p>
-  <p><a href="/tunPage">tun</a></p>
+  
+  <p><a href="/jonnyPage">Learning Pathway</a></p>
+  <p><a href="/tasPage">Webcam prediction</a></p>
+  
+  <p><a href="/howto">Tutorial</a></p>
   </>
 )
 
